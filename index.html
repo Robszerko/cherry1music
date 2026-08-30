@@ -12,12 +12,17 @@
 <style>
     :root {
         --bg-dark: #06070c;
+        --card-bg: rgba(14, 18, 32, 0.75);
+        --card-sub: rgba(22, 28, 48, 0.65);
         --cherry-red: #ff1a53;
         --cherry-dark: #b30030;
         --cherry-glow: rgba(255, 26, 83, 0.45);
         --accent-cyan: #38bdf8;
         --accent-green: #10b981;
+        --accent-neon-green: #22c55e;
         --accent-red: #ef4444;
+        --accent-amber: #f59e0b;
+        --accent-purple: #c084fc;
         --text-main: #f8fafc;
         --text-muted: #94a3b8;
         --border: rgba(255, 255, 255, 0.12);
@@ -38,6 +43,7 @@
         flex-direction: column;
         align-items: center;
         overflow-x: hidden;
+        transform: translateZ(0);
     }
 
     .viewer-container {
@@ -305,7 +311,7 @@
         position: absolute;
         top: 24px; right: 28px;
         z-index: 9999;
-        display: flex;
+        display: none;
         flex-direction: column;
         user-select: none;
         pointer-events: none;
@@ -831,7 +837,7 @@
     <!-- 📺 DUAL-DECK TV KÉPERNYŐ -->
     <div class="tv-screen-wrapper" id="tv-screen-container">
         
-        <!-- HANG ENGEDÉLYEZŐ GOMB HA AUTOPLAY TILTVA INDULT -->
+        <!-- HANG ENGEDÉLYEZŐ GOMB -->
         <div class="unmute-overlay-banner" id="unmute-banner" onclick="handleUserUnmuteClick()">
             <span>🔊 KATTINTS A HANG BEKAPCSOLÁSÁHOZ!</span>
         </div>
@@ -874,7 +880,7 @@
                 <rect x="285.72" y="0" width="142.86" height="376.875" fill="#00c0c0"/>
                 <rect x="428.58" y="0" width="142.86" height="376.875" fill="#00c000"/>
                 <rect x="571.44" y="0" width="142.86" height="376.875" fill="#c000c0"/>
-                <rect x="714.3" y="0" width="142.86" height="376.875" fill="#c0c000"/>
+                <rect x="714.3" y="0" width="142.86" height="376.875" fill="#c00000"/>
                 <rect x="857.14" y="0" width="142.86" height="376.875" fill="#0000c0"/>
                 <rect x="230" y="210" width="540" height="142" rx="14" fill="#07080f" fill-opacity="0.95" stroke="#ff1a53" stroke-width="3"/>
                 <text x="500" y="254" font-family="'Outfit', sans-serif" font-size="30" font-weight="900" fill="#ffffff" letter-spacing="1.5" text-anchor="middle">CHERRY<tspan fill="#ff1a53">1</tspan> MUSIC</text>
@@ -994,7 +1000,6 @@
     const BACKUP_DEMO_STREAM = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
     let weekSchedules = {};
-    let isTvBroadcasting = true;
     let currentClipIndex = -1;
     let activeDeckName = 'A';
     let isVideoTransitioning = false;
@@ -1004,10 +1009,6 @@
     let isLiveOnAir = false;
     let currentActiveYouTubeId = null;
     let currentActiveVideaId = null;
-
-    // 🔊 AUDIO ENGINE
-    let audioCtx = null;
-    let isAudioInitialized = false;
 
     let isLogoVisible = true;
     let logoCornerMode = 'top-right';
@@ -1033,6 +1034,7 @@
     let clipDurationMap = {};
     let ytPlayerInstance = null;
     let controlsHideTimer = null;
+    let lastSelfHealTime = Date.now();
 
     // DOM referenciák
     const deckA = document.getElementById('tv-video-deck-a');
@@ -1118,9 +1120,10 @@
         }
     };
 
-    async function safeFetchJson(url, options = {}) {
+    /* 🛡️ MEMÓRIA-BIZTOS SMART TV FETCH (0 MB CACHE FELHALMOZÓDÁS) */
+    async function safeFetchJson(url) {
         try {
-            const res = await fetch(url, options);
+            const res = await fetch(url, { cache: 'no-store' });
             if (!res.ok) return null;
             return await res.json();
         } catch (e) {
@@ -1542,7 +1545,7 @@
 
     async function fetchLiveNews() {
         try {
-            const data = await safeFetchJson(`${WORKER_URL}?_t=${Date.now()}`);
+            const data = await safeFetchJson(WORKER_URL);
             let rawList = [];
             if (data && data.news) {
                 if (Array.isArray(data.news)) rawList = data.news;
@@ -1585,7 +1588,7 @@
     }
 
     async function fetchLiveWeather() {
-        const data = await safeFetchJson(`${WORKER_URL}?_t=${Date.now()}`);
+        const data = await safeFetchJson(WORKER_URL);
         if (data && Array.isArray(data.weather) && data.weather.length > 0) {
             cachedWeatherData = data.weather;
             renderCurrentWeatherCity();
@@ -1629,6 +1632,7 @@
         }, 1200);
     }
 
+    /* 🚀 SMART TV OPTIMALIZÁLT ELŐTÖLTÉS (CSAK 15 MP-CEL A VÉGE ELŐTT TÖLT BE!) */
     function preloadNextVideoDeck(nextClip) {
         if (!nextClip || isLiveOnAir) return;
         const ytId = extractYouTubeVideoId(nextClip.url);
@@ -1643,6 +1647,16 @@
             nextDeck.preload = 'auto';
             nextDeck.load();
         }
+    }
+
+    /* 🧹 SMART TV HARDVERES DEKÓDER FELSZABADÍTÁS (0 MB MEMÓRIASZIVÁRGÁS) */
+    function releaseIdleVideoDecoder(idleDeck) {
+        if (!idleDeck) return;
+        try {
+            idleDeck.pause();
+            idleDeck.removeAttribute('src');
+            idleDeck.load(); // Kényszerített hardveres memóriaürítés a TV-ben
+        } catch(e){}
     }
 
     /* ⏱️ ÓRA & ATOMI ADÁSSZINKRON (PONTOS MŰSORKORREKCIÓVAL) */
@@ -1683,6 +1697,7 @@
                     const elapsed = curSec - curClip.startSec;
                     const remainingSec = curClip.endSec - curSec;
 
+                    // Kényszerített pontos időre vágás műsorok esetén
                     if (expectedIdx !== currentClipIndex && (extractVideaVideoId(curClip.url) || extractYouTubeVideoId(curClip.url))) {
                         syncToCurrentWallClockTime();
                         return;
@@ -1724,6 +1739,13 @@
                 }
             }
         }
+
+        // 🩺 4 ÓRÁS AUTOMATIKUS SELF-HEALING MEMÓRIATISZTÍTÁS
+        if (Date.now() - lastSelfHealTime > 14400000) {
+            lastSelfHealTime = Date.now();
+            const idleDeck = (activeDeckName === 'A') ? deckB : deckA;
+            releaseIdleVideoDecoder(idleDeck);
+        }
     }
     setInterval(updateClock, 1000);
     setInterval(updateRealtimeSongProgress, 250);
@@ -1763,8 +1785,8 @@
             const videaId = extractVideaVideoId(clip.url);
 
             if (ytId || videaId || clip.isStream) {
-                if (activeDeck) { activeDeck.volume = 0; activeDeck.pause(); }
-                if (otherDeck) { otherDeck.volume = 0; otherDeck.pause(); }
+                releaseIdleVideoDecoder(activeDeck);
+                releaseIdleVideoDecoder(otherDeck);
 
                 if (clip.isLive) {
                     isLiveOnAir = true;
@@ -1839,12 +1861,7 @@
                     ytPlayerInstance = null;
                 }
 
-                if (otherDeck) {
-                    otherDeck.pause();
-                    otherDeck.style.opacity = '0';
-                    otherDeck.volume = 0;
-                    otherDeck.classList.remove('active');
-                }
+                releaseIdleVideoDecoder(otherDeck);
 
                 const videoSrc = clip.url || `${R2_PUBLIC_DOMAIN}/${encodeURIComponent(clip.filename)}`;
 
@@ -1899,7 +1916,7 @@
         syncToCurrentWallClockTime();
     }
 
-    /* 🎬 DADOGÁSMENTESÍTETT KOCKAPONTOS VÁGÁS */
+    /* 🎬 DADOGÁSMENTESÍTETT KOCKAPONTOS VÁGÁS (HARDVERES MEMÓRIAFELSZABADÍTÁSSAL) */
     async function executeVideoCrossfade(forceImmediate = false) {
         if (isLiveOnAir && !forceImmediate) return;
         const todayKey = getSelectedDateKey(0);
@@ -1935,9 +1952,7 @@
 
         setTimeout(async () => {
             if (ytId || videaId || newClip.isStream) {
-                currentDeck.pause();
-                currentDeck.style.opacity = '0';
-                currentDeck.classList.remove('active');
+                releaseIdleVideoDecoder(currentDeck);
                 currentClipIndex = nextIdx;
 
                 if (newClip.isLive) {
@@ -1978,7 +1993,9 @@
             nextDeck.classList.add('active');
             currentDeck.style.opacity = '0';
             currentDeck.classList.remove('active');
-            currentDeck.pause();
+
+            // 🧹 Smart TV hardveres dekóder felszabadítása az inaktív decken
+            releaseIdleVideoDecoder(currentDeck);
 
             currentClipIndex = nextIdx;
             activeDeckName = nextDeckName;
@@ -2010,22 +2027,7 @@
         evaluateAgeRatingVisibility();
     }
 
-    /* 🔊 AUDIO MOTOR */
-    function setupAudioNodes() {
-        if (deckA) { deckA.muted = false; deckA.volume = masterVolume; }
-        if (deckB) { deckB.muted = false; deckB.volume = masterVolume; }
-
-        try {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                isAudioInitialized = true;
-            }
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        } catch(e){}
-    }
-
     function handleUserUnmuteClick() {
-        setupAudioNodes();
         const activeDeck = (activeDeckName === 'A') ? deckA : deckB;
         if (activeDeck) {
             activeDeck.muted = false;
@@ -2043,7 +2045,7 @@
         if (unmuteBanner) unmuteBanner.style.display = 'none';
     }
 
-    /* 🎮 NÉZŐI VEZÉRLŐK (FULLSCREEN, HANGERŐ, 3 MP AUTO-HIDE) */
+    /* 🎮 NÉZŐI VEZÉRLŐK (3 MP AUTO-HIDE) */
     function showViewerControls() {
         if (!floatingControls) return;
         floatingControls.classList.add('controls-visible');
@@ -2160,11 +2162,11 @@
         else ageRatingContainer.classList.remove('rating-visible');
     }
 
-    /* ☁️ VALÓS IDEJŰ FELHŐSZINKRON (REALTIME CLOUD SYNC ENGINE - 6 MP-ES PERIODIKUS LEKÉRDEZÉS) */
+    /* ☁️ VALÓS IDEJŰ FELHŐSZINKRON (REALTIME SYNC - CACHE: NO-STORE) */
     async function syncRealtimeFromCloud() {
         const [cloudSettings, cloudSched] = await Promise.all([
-            safeFetchJson(`${WORKER_URL}/api/radio/settings?_t=${Date.now()}`),
-            safeFetchJson(`${WORKER_URL}/api/radio/schedule?_t=${Date.now()}`)
+            safeFetchJson(`${WORKER_URL}/api/radio/settings`),
+            safeFetchJson(`${WORKER_URL}/api/radio/schedule`)
         ]);
 
         if (cloudSettings) {
@@ -2178,11 +2180,11 @@
             if (cloudSettings.logo_corner && cloudSettings.logo_corner !== logoCornerMode) {
                 logoCornerMode = cloudSettings.logo_corner;
                 if (logoCornerMode === 'top-right') {
-                    if (watermarkAnchor) { watermarkAnchor.className = 'tv-watermark-anchor pos-top-right'; }
-                    if (weatherCornerWidget) { weatherCornerWidget.className = 'tv-weather-corner-widget pos-top-left'; }
+                    if (watermarkAnchor) watermarkAnchor.className = 'tv-watermark-anchor pos-top-right';
+                    if (weatherCornerWidget) weatherCornerWidget.className = 'tv-weather-corner-widget pos-top-left';
                 } else {
-                    if (watermarkAnchor) { watermarkAnchor.className = 'tv-watermark-anchor pos-top-left'; }
-                    if (weatherCornerWidget) { weatherCornerWidget.className = 'tv-weather-corner-widget pos-top-right'; }
+                    if (watermarkAnchor) watermarkAnchor.className = 'tv-watermark-anchor pos-top-left';
+                    if (weatherCornerWidget) weatherCornerWidget.className = 'tv-weather-corner-widget pos-top-right';
                 }
             }
             if (cloudSettings.logo_pos_t && watermarkAnchor) watermarkAnchor.style.top = `${cloudSettings.logo_pos_t}px`;
@@ -2221,16 +2223,15 @@
         startWeatherCityRotator();
         applyDaypartTheme(getDaypartKeyForHour(new Date().getHours()));
 
-        setupAudioNodes();
         syncToCurrentWallClockTime();
         playWatermarkEntranceAnimation();
 
-        // Egérmozgásra / érintésre vezérlők megjelenítése
+        // Egérmozgás / érintés vezérlők
         ['mousemove', 'touchstart', 'keydown', 'click'].forEach(evtName => {
             window.addEventListener(evtName, showViewerControls, { passive: true });
         });
 
-        // 🔄 Rendszeres felhőszinkron (6 másodpercenként valós időben frissül a stúdió módosításaival)
+        // 🔄 6 másodperces valós idejű szinkronizálás a stúdióval (Cache felhalmozódás nélkül!)
         setInterval(syncRealtimeFromCloud, 6000);
         setInterval(fetchLiveNews, 10 * 60 * 1000);
         setInterval(fetchLiveWeather, 10 * 60 * 1000);
