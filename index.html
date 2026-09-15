@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="referrer" content="no-referrer-when-downgrade">
-<title>CHERRY1 MUSIC TELEVISION · TV Lite Master 2026</title>
+<title>CHERRY1 MUSIC TELEVISION · Maximum Edition 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@600;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
@@ -31,10 +31,15 @@
         --rating-size-val: 3.8cqw;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { 
+        margin: 0; padding: 0; box-sizing: border-box; 
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
 
     body {
-        background: #050508;
+        background: #040508;
         font-family: 'Outfit', sans-serif;
         color: var(--text-main);
         min-height: 100vh;
@@ -64,6 +69,7 @@
         flex-direction: column;
         gap: 10px;
         transition: transform 0.35s ease, max-width 0.35s ease;
+        contain: layout style;
     }
 
     /* HA A STÚDIÓ NYITVA VAN: A MONITOR BALRA IGAZODIK ÉS 100%-BAN LÁTHATÓ */
@@ -87,10 +93,11 @@
         border-radius: 14px;
         overflow: hidden;
         border: 1px solid var(--border);
-        transform: translateZ(0);
+        transform: translate3d(0, 0, 0);
         display: flex;
         align-items: center;
         justify-content: center;
+        contain: layout style paint;
     }
 
     .tv-screen-wrapper:fullscreen,
@@ -108,13 +115,14 @@
         z-index: 99999; background: #ff1155; color: #fff;
         padding: 0.8cqw 2.4cqw; border-radius: 30px; font-weight: 800; font-size: clamp(0.75rem, 1.2cqw, 1.1rem);
         cursor: pointer; display: none; user-select: none; border: 1px solid #ffffff;
+        box-shadow: 0 4px 20px rgba(255,17,85,0.6);
     }
 
     /* 🎬 HARDVERES VIDEÓLEJÁTSZÓ */
     .tv-video-deck {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         object-fit: contain; background: #000000; z-index: 2; opacity: 1;
-        transform: translateZ(0); will-change: opacity; transition: opacity 0.3s ease;
+        transform: translate3d(0, 0, 0); will-change: opacity; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .tv-video-deck.fading { opacity: 0; }
     .tv-video-deck.aspect-mode-zoom { object-fit: cover !important; }
@@ -125,6 +133,7 @@
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         object-fit: cover; background: #000000; z-index: 4; opacity: 0;
         pointer-events: none; transition: opacity 0.35s ease;
+        transform: translate3d(0, 0, 0);
     }
     .tv-news-bg-video.active { opacity: 1; pointer-events: auto; }
 
@@ -133,6 +142,7 @@
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99995; pointer-events: none; display: flex; align-items: center; justify-content: center;
         opacity: 0; overflow: hidden; transition: opacity 0.25s ease;
+        contain: layout style paint;
     }
     .tv-broadcast-stinger.stinger-active { opacity: 1; }
     .stinger-wipe-curtain {
@@ -148,6 +158,7 @@
     .stinger-box {
         position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px;
         padding: 1.0cqw 2.5cqw; background: #0b0f19; border: 2px solid var(--cherry-red); border-radius: 8px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 30px rgba(0,0,0,0.9);
     }
     .stinger-title { font-size: clamp(1.1rem, 2.2cqw, 2rem); font-weight: 900; color: #fff; }
     .stinger-title span { color: var(--cherry-red); }
@@ -159,38 +170,40 @@
         z-index: 99980; background: radial-gradient(circle at center, rgba(10, 14, 26, 0.82) 0%, rgba(2, 4, 10, 0.95) 100%);
         display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
         user-select: none; opacity: 0; transition: opacity 0.4s ease;
+        contain: layout style paint;
     }
     .tv-station-clock-overlay.active { display: flex; opacity: 1; }
     .clock-glass-chassis {
         width: clamp(230px, 32cqw, 360px); height: clamp(230px, 32cqw, 360px); border-radius: 50%;
         background: radial-gradient(circle, #0e1424 0%, #050811 100%);
         border: 3px solid rgba(255, 255, 255, 0.45);
-        box-shadow: 0 0 35px rgba(255,17,85,0.4), inset 0 0 25px rgba(0,0,0,0.8);
+        box-shadow: 0 0 35px rgba(255,17,85,0.4), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 0 25px rgba(0,0,0,0.8);
         display: flex; align-items: center; justify-content: center; position: relative;
     }
     .analog-clock-svg { width: 100%; height: 100%; }
     .clock-title-badge {
         display: flex; flex-direction: column; align-items: center; gap: 3px;
         background: #0b0f1c; border: 2px solid var(--cherry-red); padding: 8px 24px; border-radius: 30px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.85);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 20px rgba(0,0,0,0.85);
     }
     .clock-title-text { font-weight: 900; font-size: clamp(0.95rem, 1.4cqw, 1.3rem); color: #fff; letter-spacing: 0.5px; }
     .clock-sub-text { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.70rem, 0.95cqw, 0.90rem); font-weight: 800; color: var(--accent-cyan); }
 
-    /* 📰 HÍREK RÖVIDEN MAGAZIN (ÁTLÁTSZÓ HÁTTÉRREL) */
+    /* 📰 HÍREK RÖVIDEN MAGAZIN */
     .tv-hourly-news-magazine {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99985; background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.78) 100%);
         display: none; flex-direction: column; justify-content: space-between; padding: 3.2cqw 4.0cqw;
         user-select: none; opacity: 0; transition: opacity 0.35s ease;
+        contain: layout style paint;
     }
     .tv-hourly-news-magazine.active { display: flex; opacity: 1; }
 
-    /* 🌟 PIROS FEJLÉCSÁV: A LOGÓIG ÉR ÉS NINCS BENNE SEMMILYEN SZÁM */
+    /* 🌟 PIROS FEJLÉCSÁV: A LOGÓIG ÉR ÉS NINCS BENNE SZÁM */
     .mag-top-header {
         display: flex; align-items: center; justify-content: flex-start;
         border-bottom: 2.8px solid var(--cherry-red); padding-bottom: 0.35cqw;
-        margin-right: 7.6cqw; /* Pontosan a logó széléig húzódik */
+        margin-right: 7.6cqw;
     }
     .mag-main-title-txt {
         font-size: clamp(1.15rem, 1.6cqw, 1.55rem); font-weight: 900; color: #fff;
@@ -225,26 +238,36 @@
     .weather-card-rich {
         background: rgba(10, 15, 30, 0.88); border: 1px solid rgba(255, 255, 255, 0.25); border-top: 3px solid var(--cherry-red);
         border-radius: 8px; padding: 0.6cqw 1.0cqw; display: flex; flex-direction: column; justify-content: space-between;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 0 15px rgba(255,255,255,0.02), 0 6px 18px rgba(0,0,0,0.7);
+        contain: layout style paint;
     }
     .wcr-city-row { display: flex; justify-content: space-between; align-items: center; }
     .wcr-city { font-size: 0.95rem; font-weight: 900; color: #ffffff; text-transform: uppercase; }
     .wcr-local-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); font-weight: 800; }
     .wcr-main-row { display: flex; align-items: center; justify-content: space-between; margin: 2px 0; }
-    .wcr-icon-desc { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #cbd5e1; font-weight: 700; }
-    .wcr-temp { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 900; color: var(--cherry-red); }
+    .wcr-icon-desc { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; font-weight: 700; }
+    .wcr-temp { font-family: 'JetBrains Mono', monospace; font-size: 1.55rem; font-weight: 900; color: var(--cherry-red); }
     .wcr-details-grid {
         display: grid; grid-template-columns: 1fr 1fr; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #94a3b8;
         border-top: 1px solid rgba(255,255,255,0.12); padding-top: 3px;
     }
     .wcr-details-grid span strong { color: #fff; }
 
+    /* 🌟 ANIMÁLT VEKTOROS IDŐJÁRÁS IKONOK STÍLUSAI */
+    .wx-svg-wrap { width: 34px; height: 34px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+    .wx-svg-sun-rays { animation: spinSunRays 14s linear infinite; transform-origin: 18px 18px; }
+    .wx-svg-moon-pulse { animation: pulseMoon 3s ease-in-out infinite alternate; }
+    .wx-svg-rain-drop { animation: rainFall 1.2s ease-in-out infinite; }
+    @keyframes spinSunRays { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes pulseMoon { 0% { opacity: 0.85; filter: drop-shadow(0 0 2px rgba(56,189,248,0.5)); } 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(56,189,248,0.9)); } }
+    @keyframes rainFall { 0% { transform: translateY(-3px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
+
     /* 📺 EPG SÁV */
     .tv-epg-guide-banner {
         position: absolute; bottom: 2.2cqw; left: 2.5cqw; right: 2.5cqw; z-index: 9997;
         background: #090e1c; border: 1.5px solid var(--cherry-red); border-radius: 8px;
         padding: 0.9cqw 1.4cqw; display: none; flex-direction: column; gap: 0.6cqw;
-        opacity: 0; transition: opacity 0.3s ease;
+        opacity: 0; transition: opacity 0.3s ease; contain: layout style paint;
     }
     .tv-epg-guide-banner.active { display: flex; opacity: 1; }
     .epg-top-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.4cqw; }
@@ -260,7 +283,7 @@
         position: absolute; bottom: 2.2cqw; left: 2.5cqw; right: 2.5cqw; z-index: 9996;
         background: #0b0f1d; border: 1.5px solid var(--cherry-red); border-radius: 6px;
         padding: 0.6cqw 1.2cqw; display: none; align-items: center; gap: 1cqw;
-        opacity: 0; transition: opacity 0.3s ease;
+        opacity: 0; transition: opacity 0.3s ease; contain: layout style paint;
     }
     .tv-bottom-news-crawler.active { display: flex; opacity: 1; }
     .bnc-logo-box { width: 3.2cqw; min-width: 26px; height: auto; aspect-ratio: 70/100; flex-shrink: 0; }
@@ -280,23 +303,25 @@
     .tv-master-osd-layer {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 200000; pointer-events: none !important;
+        contain: layout style paint;
     }
 
     /* 🍒 CSATORNALOGÓ */
     .tv-watermark-anchor {
         position: absolute; top: var(--logo-top-val, 2.5cqw); right: var(--logo-side-val, 2.8cqw);
         display: flex; align-items: center; pointer-events: auto; cursor: pointer; z-index: 200000;
-        transform: scale(var(--logo-scale-val, 1)); transform-origin: top right;
+        transform: scale(var(--logo-scale-val, 1)) translate3d(0, 0, 0); transform-origin: top right;
+        contain: layout style paint;
     }
     .tv-watermark-anchor.pos-top-left { right: auto; left: var(--logo-side-val, 2.8cqw); transform-origin: top left; }
     .wm-logo-col { display: flex; flex-direction: column; align-items: center; width: 4.4cqw; min-width: 36px; max-width: 65px; }
-    .c1-master-logo-svg { width: 100%; height: auto; aspect-ratio: 70/100; }
+    .c1-master-logo-svg { width: 100%; height: auto; aspect-ratio: 70/100; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8)); }
     
     /* 🌟 LOGÓ ALATTI SÁV: NORMÁL ESETBEN "MUSIC", HÍREKKOR PONTOS IDŐ (ÓRA:PERC:MP) */
     .wm-sub-music-badge {
         font-family: 'JetBrains Mono', monospace; font-size: clamp(0.55rem, 0.72cqw, 0.82rem);
         font-weight: 900; letter-spacing: 1px; color: #ffffff; margin-top: 2px;
-        transition: color 0.3s ease;
+        transition: color 0.3s ease; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
     .wm-sub-live-badge { font-family: 'Outfit', sans-serif; font-size: 0.65rem; font-weight: 800; color: #ffffff; background: #ff1155; padding: 1px 6px; border-radius: 3px; display: none; }
     .wm-logo-col.is-live .wm-sub-music-badge { display: none !important; }
@@ -309,6 +334,8 @@
         background: #0c101d; border: 1px solid rgba(255, 255, 255, 0.2); border-left: 5px solid var(--cherry-red);
         border-radius: 8px; padding: 0.6cqw 1.4cqw;
         opacity: 0; transform: translate3d(-20px, 0, 0); transition: opacity 0.3s ease, transform 0.3s ease;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 25px rgba(0,0,0,0.8);
+        contain: layout style paint;
     }
     .tv-cherry-track-card.card-active { opacity: 1; transform: translate3d(0, 0, 0); }
     .c1-card-emblem { width: 3.0cqw; min-width: 24px; height: auto; aspect-ratio: 70/100; flex-shrink: 0; }
@@ -321,7 +348,7 @@
     .tv-age-rating-container {
         position: absolute; bottom: var(--rating-bottom-val, 2.0cqw); right: var(--rating-right-val, 2.8cqw);
         display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0;
-        transition: opacity 0.3s ease; z-index: 200000;
+        transition: opacity 0.3s ease; z-index: 200000; contain: layout style paint;
     }
     .tv-age-rating-container.rating-visible { opacity: 0.95; }
     .nmhh-ring {
@@ -338,6 +365,7 @@
         background: #090e1a; border: 1px solid rgba(255, 255, 255, 0.25);
         padding: 6px 14px; border-radius: 25px; display: flex; align-items: center; gap: 10px;
         opacity: 1; transition: opacity 0.3s ease;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 20px rgba(0,0,0,0.8);
     }
     .viewer-floating-controls.controls-hidden { opacity: 0 !important; pointer-events: none !important; }
     .btn-viewer-act { background: transparent; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
@@ -346,6 +374,7 @@
     .viewer-schedule-bar {
         background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
         padding: 10px 14px; display: flex; flex-direction: column; gap: 6px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
     }
     .v-meta-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 0.85rem; }
     .v-pill-now { background: var(--cherry-red); color: #ffffff; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
@@ -387,6 +416,7 @@
     .hud-box {
         background: #0d1224; border: 1px solid rgba(255,255,255,0.12);
         border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
     }
     .hud-box-title { font-size: 0.75rem; font-weight: 900; color: var(--cherry-red); text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -435,7 +465,7 @@
         transition: width 0.05s linear;
     }
 
-    /* 💾 FIX ÁLLANDÓ MENTÉS GOMB */
+    /* 💾 FIX ÁLLANDÓ MENTÉS PANEL A HUD ALJÁN */
     .hud-footer-save-bar {
         padding: 12px 16px; background: #0a0e1c; border-top: 1px solid rgba(255,255,255,0.15);
         display: flex; flex-direction: column; gap: 6px;
@@ -864,11 +894,14 @@
     let currentPinInput = "";
     let isStudioOpen = false;
 
-    // 🎚️ FINOMÍTOTT BROADCAST LIMITER
+    // 🎚️ BROADCAST MASTERING AUDIO ENGINE
     let audioCtx = null;
     let sourceNode = null;
+    let subRumbleFilter = null;
+    let airClarityShelf = null;
     let makeupGainNode = null;
     let compressorNode = null;
+    let softSaturator = null;
     let limiterNode = null;
     let analyserNode = null;
     let isLimiterActive = true;
@@ -917,13 +950,7 @@
         { id: "extreme", name: "Dubaj", status: "EAE · Trópusi sivatag", lat: 25.2048, lon: 55.2708, tz: "Asia/Dubai" }
     ];
 
-    // Aktuálisan eltárolt élő időjárás adatok
-    let liveWeatherStore = {
-        hungary1: [],
-        hungary2: [],
-        world: [],
-        extreme: []
-    };
+    let liveWeatherStore = { hungary1: [], hungary2: [], world: [], extreme: [] };
 
     const player = document.getElementById('tv-video-player');
     const newsBgVideo = document.getElementById('tv-news-bg-video');
@@ -995,25 +1022,122 @@
     }
 
     /* ========================================================== */
-    /* ⛅ OPEN-METEO VALÓS IDEJŰ LEKÉRDEZŐ MOTOR                  */
+    /* 🌟 ANIMÁLT VEKTOROS SVG IDŐJÁRÁS GENERÁTOR                 */
     /* ========================================================== */
+    function getAnimatedWeatherSvg(iconType, isNight) {
+        if (iconType === "sun") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <circle cx="18" cy="18" r="7.5" fill="#facc15" filter="drop-shadow(0 0 4px #facc15)"/>
+                        <g class="wx-svg-sun-rays" stroke="#facc15" stroke-width="2.2" stroke-linecap="round">
+                            <line x1="18" y1="3" x2="18" y2="6.5"/><line x1="18" y1="29.5" x2="18" y2="33"/>
+                            <line x1="3" y1="18" x2="6.5" y2="18"/><line x1="29.5" y1="18" x2="33" y2="18"/>
+                            <line x1="7.4" y1="7.4" x2="9.8" y2="9.8"/><line x1="26.2" y1="26.2" x2="28.6" y2="28.6"/>
+                            <line x1="7.4" y1="28.6" x2="9.8" y2="26.2"/><line x1="26.2" y1="9.8" x2="28.6" y2="7.4"/>
+                        </g>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "moon") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <path class="wx-svg-moon-pulse" d="M21 6 A11 11 0 1 0 30 20 A13 13 0 0 1 21 6 Z" fill="#38bdf8"/>
+                        <circle cx="28" cy="8" r="1" fill="#fff" opacity="0.9"/>
+                        <circle cx="8" cy="12" r="0.8" fill="#fff" opacity="0.7"/>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "cloud-sun") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <circle cx="14" cy="12" r="5.5" fill="#facc15"/>
+                        <path d="M9 25 h18 a5 5 0 0 0 1-9.9 A7 7 0 0 0 12 16 a4.5 4.5 0 0 0-3 9z" fill="#cbd5e1" opacity="0.95"/>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "cloud-moon") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <path d="M16 6 A8 8 0 1 0 24 16 A10 10 0 0 1 16 6 Z" fill="#38bdf8"/>
+                        <path d="M9 25 h18 a5 5 0 0 0 1-9.9 A7 7 0 0 0 12 16 a4.5 4.5 0 0 0-3 9z" fill="#94a3b8" opacity="0.95"/>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "rain") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <path d="M8 20 h20 a5 5 0 0 0 1-9.9 A7 7 0 0 0 11 11 a4.5 4.5 0 0 0-3 9z" fill="#94a3b8"/>
+                        <g class="wx-svg-rain-drop" stroke="#38bdf8" stroke-width="2" stroke-linecap="round">
+                            <line x1="12" y1="24" x2="10" y2="28"/>
+                            <line x1="18" y1="24" x2="16" y2="28"/>
+                            <line x1="24" y1="24" x2="22" y2="28"/>
+                        </g>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "snow") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <path d="M8 19 h20 a5 5 0 0 0 1-9.9 A7 7 0 0 0 11 10 a4.5 4.5 0 0 0-3 9z" fill="#cbd5e1"/>
+                        <circle cx="12" cy="25" r="1.5" fill="#fff"/>
+                        <circle cx="18" cy="27" r="1.5" fill="#fff"/>
+                        <circle cx="24" cy="25" r="1.5" fill="#fff"/>
+                    </svg>
+                </div>
+            `;
+        }
+        if (iconType === "thunder") {
+            return `
+                <div class="wx-svg-wrap">
+                    <svg viewBox="0 0 36 36" width="34" height="34">
+                        <path d="M8 18 h20 a5 5 0 0 0 1-9.9 A7 7 0 0 0 11 9 a4.5 4.5 0 0 0-3 9z" fill="#64748b"/>
+                        <polygon points="19,19 14,26 18,26 16,33 22,24 18,24" fill="#facc15"/>
+                    </svg>
+                </div>
+            `;
+        }
+        // Alapértelmezett felhő:
+        return `
+            <div class="wx-svg-wrap">
+                <svg viewBox="0 0 36 36" width="34" height="34">
+                    <path d="M8 22 h20 a5 5 0 0 0 1-9.9 A7 7 0 0 0 11 13 a4.5 4.5 0 0 0-3 9z" fill="#cbd5e1"/>
+                </svg>
+            </div>
+        `;
+    }
+
     // WMO Kódok és szigorú Éjjel/Nappal (is_day) szétválasztás
     function getWmoWeatherInfo(code, isDay) {
         const isNight = (isDay === 0 || isDay === false);
-        if (code === 0) return isNight ? { icon: "🌙", desc: "Tiszta derült égbolt" } : { icon: "☀️", desc: "Tiszta napos idő" };
-        if (code === 1) return isNight ? { icon: "🌌", desc: "Túlnyomóan derült" } : { icon: "🌤️", desc: "Túlnyomóan derült" };
-        if (code === 2) return isNight ? { icon: "☁️🌙", desc: "Változóan felhős" } : { icon: "⛅", desc: "Változóan felhős" };
-        if (code === 3) return { icon: "☁️", desc: "Borult égbolt" };
-        if (code === 45 || code === 48) return { icon: "🌫️", desc: "Párás, ködös idő" };
-        if (code >= 51 && code <= 55) return { icon: "🌦️", desc: "Szitáló eső" };
-        if (code === 56 || code === 57) return { icon: "🌨️", desc: "Ónos szitálás" };
-        if (code >= 61 && code <= 65) return { icon: "🌧️", desc: "Csendes esőzés" };
-        if (code === 66 || code === 67) return { icon: "🌧️❄️", desc: "Ónos eső" };
-        if (code >= 71 && code <= 77) return { icon: "❄️", desc: "Havazás" };
-        if (code >= 80 && code <= 82) return isNight ? { icon: "🌧️", desc: "Éjszakai zápor" } : { icon: "🌦️", desc: "Záporeső" };
-        if (code === 85 || code === 86) return { icon: "🌨️", desc: "Hózápor" };
-        if (code >= 95 && code <= 99) return { icon: "⛈️", desc: "Zivatar, vihar" };
-        return isNight ? { icon: "🌙", desc: "Csendes éjszaka" } : { icon: "🌤️", desc: "Kellemes idő" };
+        if (code === 0) {
+            return isNight 
+                ? { iconSvg: getAnimatedWeatherSvg("moon", true), desc: "Tiszta derült égbolt" }
+                : { iconSvg: getAnimatedWeatherSvg("sun", false), desc: "Tiszta napos idő" };
+        }
+        if (code === 1 || code === 2) {
+            return isNight 
+                ? { iconSvg: getAnimatedWeatherSvg("cloud-moon", true), desc: "Változóan felhős" }
+                : { iconSvg: getAnimatedWeatherSvg("cloud-sun", false), desc: "Változóan felhős" };
+        }
+        if (code === 3) return { iconSvg: getAnimatedWeatherSvg("cloud", isNight), desc: "Borult égbolt" };
+        if (code === 45 || code === 48) return { iconSvg: getAnimatedWeatherSvg("cloud", isNight), desc: "Párás, ködös" };
+        if (code >= 51 && code <= 67) return { iconSvg: getAnimatedWeatherSvg("rain", isNight), desc: "Esőzés, zápor" };
+        if (code >= 71 && code <= 86) return { iconSvg: getAnimatedWeatherSvg("snow", isNight), desc: "Hószállingózás" };
+        if (code >= 95) return { iconSvg: getAnimatedWeatherSvg("thunder", isNight), desc: "Zivatar, vihar" };
+        return isNight 
+            ? { iconSvg: getAnimatedWeatherSvg("moon", true), desc: "Csendes éjszaka" }
+            : { iconSvg: getAnimatedWeatherSvg("sun", false), desc: "Kellemes idő" };
     }
 
     async function fetchRealtimeOpenMeteoWeather() {
@@ -1042,7 +1166,7 @@
                     humidity: Math.round(cur.relative_humidity_2m),
                     wind: Math.round(cur.wind_speed_10m),
                     pressure: Math.round(cur.surface_pressure),
-                    icon: weatherInfo.icon,
+                    iconSvg: weatherInfo.iconSvg,
                     desc: weatherInfo.desc,
                     isDay: cur.is_day
                 });
@@ -1050,13 +1174,23 @@
 
             liveWeatherStore = grouped;
         } catch(e) {
-            console.warn("Open-Meteo realtime fetch fallback:", e);
+            console.warn("Open-Meteo realtime fetch:", e);
         }
     }
 
     /* ========================================================== */
-    /* 🎚️ FINOMÍTOTT AUDIO LIMITER                                 */
+    /* 🎚️ BROADCAST MASTERING ENGINE (TELJES STÚDIÓ HANGZÁS)      */
     /* ========================================================== */
+    function makeAnalogSoftClipCurve(amount = 18) {
+        const n = 44100;
+        const curve = new Float32Array(n);
+        for (let i = 0; i < n; ++i) {
+            let x = (i * 2) / n - 1;
+            curve[i] = Math.tanh(x * (1 + amount / 100));
+        }
+        return curve;
+    }
+
     function initBroadcastAudioLimiter() {
         if (audioCtx) return;
         try {
@@ -1064,23 +1198,51 @@
             audioCtx = new AudioContextClass();
             sourceNode = audioCtx.createMediaElementSource(player);
 
+            // 1. 32 Hz Szub-basszus vágás (Megszünteti a TV hangszóróinak torzítását)
+            subRumbleFilter = audioCtx.createBiquadFilter();
+            subRumbleFilter.type = "highpass";
+            subRumbleFilter.frequency.setValueAtTime(32, audioCtx.currentTime);
+            subRumbleFilter.Q.setValueAtTime(0.707, audioCtx.currentTime);
+
+            // 2. 10 kHz "Air & Clarity" stúdió magas-kiemelés (Fényt ad a régi tompa zenéknek)
+            airClarityShelf = audioCtx.createBiquadFilter();
+            airClarityShelf.type = "highshelf";
+            airClarityShelf.frequency.setValueAtTime(10000, audioCtx.currentTime);
+            airClarityShelf.gain.setValueAtTime(1.8, audioCtx.currentTime);
+
+            // 3. Make-up Gain szintező
             makeupGainNode = audioCtx.createGain();
+
+            // 4. Broadcast Dinamika Kompresszor
             compressorNode = audioCtx.createDynamicsCompressor();
+
+            // 5. Analóg Soft-Clipping Szaturáció
+            softSaturator = audioCtx.createWaveShaper();
+            softSaturator.curve = makeAnalogSoftClipCurve(18);
+            softSaturator.oversample = "2x";
+
+            // 6. Brickwall Peak Limiter (-3.0 dBFS plafon, sosem ordít a TV-n)
             limiterNode = audioCtx.createDynamicsCompressor();
+
+            // 7. Analyser Node a HUD kivezérlésmérőhöz
             analyserNode = audioCtx.createAnalyser();
             analyserNode.fftSize = 64;
 
             applyManualLimiterParams();
 
-            sourceNode.connect(makeupGainNode);
+            // Lánc összekötése:
+            sourceNode.connect(subRumbleFilter);
+            subRumbleFilter.connect(airClarityShelf);
+            airClarityShelf.connect(makeupGainNode);
             makeupGainNode.connect(compressorNode);
-            compressorNode.connect(limiterNode);
+            compressorNode.connect(softSaturator);
+            softSaturator.connect(limiterNode);
             limiterNode.connect(analyserNode);
             analyserNode.connect(audioCtx.destination);
 
             startLimiterMeterLoop();
         } catch(e) {
-            console.warn("AudioContext bypass:", e);
+            console.warn("AudioContext init fallback:", e);
         }
     }
 
@@ -1365,7 +1527,7 @@
                 alert("⚠️ Helyileg érvényesült, a felhő nem válaszolt.");
             }
         } catch(e) {
-            alert("⚠️ Helyileg elmentve.");
+            alert("⚠️ Helyi beállítások sikeresek.");
         } finally {
             if (btn) btn.textContent = origText;
         }
@@ -1794,10 +1956,8 @@
             if (!isHourlyNewsRunning || pageIdx >= pages.length) return;
 
             const pageConf = pages[pageIdx];
-            // 🌟 A fejléc szövege a logóig tartó piros csík fölött jelenik meg, számok nélkül:
             if (magMainTitleTxt) magMainTitleTxt.textContent = pageConf.title;
 
-            // Ha az Open-Meteo még nem töltődött volna be, alapértelmezett fallbacket adunk:
             let locations = liveWeatherStore[pageConf.id];
             if (!locations || locations.length === 0) {
                 locations = ALL_WEATHER_STATIONS.filter(s => s.id === pageConf.id).map(s => ({
@@ -1808,7 +1968,7 @@
                     humidity: 50,
                     wind: 12,
                     pressure: 1016,
-                    icon: "☀️",
+                    iconSvg: getAnimatedWeatherSvg("sun", false),
                     desc: "Tiszta idő",
                     isDay: 1
                 }));
@@ -1828,7 +1988,7 @@
                     </div>
                     <div class="wcr-main-row">
                         <div class="wcr-icon-desc">
-                            <span style="font-size:1.4rem;">${loc.icon}</span>
+                            ${loc.iconSvg}
                             <span>${escapeHtml(loc.status || loc.desc || "Kellemes")}</span>
                         </div>
                         <div class="wcr-temp">${loc.temp > 0 ? '+' : ''}${loc.temp}°C</div>
@@ -2271,7 +2431,7 @@
         buildClockTicks();
         await loadCloudState();
         fetchLiveNews();
-        fetchRealtimeOpenMeteoWeather(); // 🌟 Open-Meteo azonnali lekérdezés
+        fetchRealtimeOpenMeteoWeather();
 
         const params = new URLSearchParams(window.location.search);
         if (params.get('admin') === '1' || window.location.hash === '#studio') {
@@ -2284,8 +2444,8 @@
 
         resetControlsTimer();
         setInterval(fetchLiveNews, 5 * 60 * 1000);
-        setInterval(fetchRealtimeOpenMeteoWeather, 15 * 60 * 1000); // 15 percenként frissülő élő időjárás
-        setInterval(() => { loadCloudState(false); }, 60 * 1000);
+        setInterval(fetchRealtimeOpenMeteoWeather, 15 * 60 * 1000); // 15 percenként frissülő Open-Meteo
+        setInterval(() => { loadCloudState(false); }, 60 * 1000); // 60 mp-es automata felhőszinkron a Stúdióval
     });
 </script>
 </body>
