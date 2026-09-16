@@ -7,7 +7,8 @@
 <title>CHERRY1 MUSIC TELEVISION · TV Lite Master 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@600;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@600;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+<!-- 🔴 HLS.JS STREAM MOTOR -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
     :root {
@@ -117,7 +118,6 @@
         box-shadow: 0 4px 20px rgba(255,17,85,0.6);
     }
 
-    /* 🎬 HARDVERES VIDEÓLEJÁTSZÓ VAJPUHA BROADCAST ÁTTŰNÉSSEL */
     .tv-video-deck {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         object-fit: contain; background: #000000; z-index: 2; opacity: 1;
@@ -136,6 +136,7 @@
     }
     .tv-news-bg-video.active { opacity: 1; pointer-events: auto; }
 
+    /* 🕰️ PRÉMIUM CHERRY1 ADÁSÓRA */
     .tv-station-clock-overlay {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99980; background: radial-gradient(circle at center, rgba(10, 14, 26, 0.82) 0%, rgba(2, 4, 10, 0.95) 100%);
@@ -160,6 +161,7 @@
     .clock-title-text { font-weight: 900; font-size: clamp(0.95rem, 1.4cqw, 1.3rem); color: #fff; letter-spacing: 0.5px; }
     .clock-sub-text { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.70rem, 0.95cqw, 0.90rem); font-weight: 800; color: var(--accent-cyan); }
 
+    /* 📰 HÍREK RÖVIDEN MAGAZIN */
     .tv-hourly-news-magazine {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99985; background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.78) 100%);
@@ -244,22 +246,18 @@
     .epg-title { font-size: 0.78rem; color: #38bdf8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* ============================================================== */
-    /* 📰 MINIMALISTA PRÉMIUM ALSÓ HÍRSÁV (DOBOZMENTES, FÉNYCSÍKKAL)  */
+    /* 🌍 CHERRY1 VIVA-HÍRSÁV: FORGÓ FÖLD GÖMBBEL & BÉLYEGKÉPPEL      */
     /* ============================================================== */
     .tv-bottom-news-crawler {
         position: absolute;
-        bottom: 2.4cqw;
-        left: 3.0cqw;
-        right: 3.0cqw;
+        bottom: 2.5cqw;
+        left: 2.8cqw;
+        right: 2.8cqw;
         z-index: 9996;
         display: none;
         align-items: center;
-        gap: 1.4cqw;
+        gap: 0;
         background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
         opacity: 0;
         transform: translate3d(0, 18px, 0);
         transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -271,32 +269,60 @@
         opacity: 1 !important;
         transform: translate3d(0, 0, 0) !important;
     }
-    .bnc-logo-box {
-        width: 3.2cqw; min-width: 26px; max-width: 48px; height: auto; aspect-ratio: 70/100; flex-shrink: 0;
+
+    /* Forgó 3D Vektoros Föld Gömb Konténer */
+    .bnc-globe-wrap {
+        display: flex; align-items: center; justify-content: center;
+        width: 3.8cqw; min-width: 32px; height: 3.8cqw; min-height: 32px;
+        background: #080c18; border: 2px solid var(--cherry-red);
+        border-radius: 8px 0 0 8px; flex-shrink: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 25px rgba(0,0,0,0.85);
     }
-    .bnc-divider {
-        width: 3px; height: 3.2cqw; min-height: 28px;
-        background: var(--cherry-red);
-        box-shadow: 0 0 10px var(--cherry-red), 0 0 18px rgba(255, 17, 85, 0.6);
-        border-radius: 2px; flex-shrink: 0;
+    .bnc-globe-svg {
+        width: 2.4cqw; height: 2.4cqw; animation: rotateGlobe 14s linear infinite;
+        transform-origin: 18px 18px; filter: drop-shadow(0 0 4px var(--cherry-red));
+    }
+    @keyframes rotateGlobe { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Háromszög vágás a Föld után */
+    .bnc-wedge {
+        width: 0; height: 0;
+        border-top: 1.9cqw solid transparent;
+        border-bottom: 1.9cqw solid transparent;
+        border-left: 1.5cqw solid var(--cherry-red);
+        flex-shrink: 0;
+    }
+
+    /* Hírsáv Főtörzs */
+    .bnc-main-frame {
+        display: flex; align-items: center; gap: 1.0cqw;
+        background: rgba(8, 12, 24, 0.94);
+        border: 2px solid var(--cherry-red); border-left: none;
+        border-radius: 0 8px 8px 0;
+        padding: 0.45cqw 1.2cqw 0.45cqw 0.6cqw;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 30px rgba(0,0,0,0.9);
+        overflow: hidden; max-width: 75cqw;
+    }
+    .bnc-thumb-img {
+        width: 8.5cqw; height: 4.8cqw; border-radius: 4px; object-fit: cover;
+        border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0;
     }
     .bnc-content {
-        flex: 1; display: flex; flex-direction: column; gap: 0.15cqw; overflow: hidden;
-        text-shadow: 0 2px 14px rgba(0,0,0,0.98), 0 0 20px rgba(0,0,0,0.95);
+        flex: 1; display: flex; flex-direction: column; gap: 0.1cqw; overflow: hidden;
     }
     .bnc-header-row { display: flex; align-items: center; gap: 8px; }
     .bnc-source-pill {
-        font-family: 'JetBrains Mono', monospace; font-size: clamp(0.58rem, 0.74cqw, 0.85rem);
-        font-weight: 900; color: var(--cherry-red); text-transform: uppercase; letter-spacing: 2px;
-        background: transparent !important; padding: 0 !important;
+        font-family: 'Syne', sans-serif; font-size: clamp(0.55rem, 0.72cqw, 0.85rem);
+        font-weight: 900; background: var(--cherry-red); color: #fff;
+        padding: 1px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .bnc-time { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.58rem, 0.74cqw, 0.85rem); color: #94a3b8; font-weight: 700; }
+    .bnc-time { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.55rem, 0.70cqw, 0.80rem); color: var(--accent-cyan); font-weight: 800; }
     .bnc-headline {
-        font-family: 'Outfit', sans-serif; font-size: clamp(0.95rem, 1.35cqw, 1.65rem);
+        font-family: 'Outfit', sans-serif; font-size: clamp(0.9rem, 1.2cqw, 1.45rem);
         font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15;
     }
     .bnc-desc-lbl {
-        font-family: 'Outfit', sans-serif; font-size: clamp(0.75rem, 1.0cqw, 1.2rem);
+        font-family: 'Outfit', sans-serif; font-size: clamp(0.72rem, 0.95cqw, 1.1rem);
         color: #cbd5e1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
     }
 
@@ -312,7 +338,7 @@
         contain: layout style paint;
     }
 
-    /* 🍒 1. CSATORNALOGÓ (TV2 BROADCAST GLASS, SÖTÉT LAYER NÉLKÜL) */
+    /* 🍒 CSATORNALOGÓ (TV2 BROADCAST GLASS, SÖTÉT LAYER NÉLKÜL) */
     .tv-watermark-anchor {
         position: absolute; top: var(--logo-top-val, 2.5cqw); right: var(--logo-side-val, 2.8cqw);
         display: flex; align-items: center; pointer-events: auto; cursor: pointer; z-index: 200000;
@@ -338,7 +364,7 @@
     .wm-logo-col.is-live .wm-sub-music-badge { display: none !important; }
     .wm-logo-col.is-live .wm-sub-live-badge { display: inline-block !important; }
 
-    /* 🍒 2. STÚDIÓ FEJLÉC BRAND LOGÓ */
+    /* 🍒 STÚDIÓ FEJLÉC BRAND LOGÓ */
     .tv-brand-badge-anchor {
         position: absolute; top: var(--badge-top-val, 2.5cqw); left: var(--badge-left-val, 2.8cqw);
         display: none; align-items: center; pointer-events: none; z-index: 199990;
@@ -359,7 +385,7 @@
     .c1-brand-title-sub { font-family: 'Space Mono', 'JetBrains Mono', monospace; font-size: clamp(0.40rem, 0.55cqw, 0.65rem); font-weight: 800; letter-spacing: 2px; color: rgba(255,255,255,0.75); }
 
     /* ============================================================== */
-    /* 🍒 3. 7-ES MINIMALIST ARCHITECTURE DALINFÓ (DOBOZMENTES)       */
+    /* 🍒 CHERRY1 VIVA 1998 HIBRID DALINFÓ: PLAY/NEXT & HÁROMSZÖG     */
     /* ============================================================== */
     .tv-cherry-track-card {
         position: absolute;
@@ -368,13 +394,12 @@
         z-index: 100000;
         display: flex;
         align-items: center;
-        gap: 1.4cqw;
+        gap: 0;
         max-width: 72cqw;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         padding: 0 !important;
-        border-radius: 0 !important;
         opacity: 0;
         transform: translate3d(-35px, 0, 0);
         transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -386,39 +411,58 @@
         transform: translate3d(0, 0, 0) !important;
     }
 
+    /* 1. Teljes logó embléma elöl egy sötétített kis talpon */
+    .c1-card-emblem-box {
+        display: flex; align-items: center; justify-content: center;
+        padding: 0.5cqw 0.7cqw; background: #080c18;
+        border: 2px solid var(--cherry-red); border-right: none;
+        border-radius: 8px 0 0 8px; flex-shrink: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 25px rgba(0,0,0,0.85);
+    }
     .c1-card-emblem {
-        width: 3.6cqw; min-width: 30px; max-width: 55px; height: auto; aspect-ratio: 70/100;
-        flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+        width: 3.2cqw; min-width: 26px; height: auto; aspect-ratio: 70/100;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
     }
 
-    .c1-card-divider {
-        width: 3px; height: 3.6cqw; min-height: 32px;
-        background: #ffffff;
-        box-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 17, 85, 0.5);
-        border-radius: 2px; flex-shrink: 0;
+    /* 2. CHERRY VIVA Háromszög / Ék átmenet */
+    .c1-card-triangle {
+        width: 0; height: 0;
+        border-top: 1.9cqw solid transparent;
+        border-bottom: 1.9cqw solid transparent;
+        border-left: 1.5cqw solid var(--cherry-red);
+        flex-shrink: 0;
     }
 
+    /* 3. Főtörzs doboz finom fényéllel */
     .c1-card-body {
-        display: flex; flex-direction: column; justify-content: center; gap: 0.15cqw;
-        text-shadow: 0 2px 14px rgba(0,0,0,0.98), 0 0 24px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,1);
+        display: flex; flex-direction: column; justify-content: center;
+        background: rgba(8, 12, 24, 0.94);
+        border: 2px solid var(--cherry-red); border-left: none;
+        border-radius: 0 8px 8px 0;
+        padding: 0.5cqw 1.5cqw 0.5cqw 0.8cqw;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 30px rgba(0,0,0,0.9);
     }
     .c1-card-tag {
-        font-family: 'JetBrains Mono', monospace; font-size: clamp(0.58rem, 0.76cqw, 0.88rem);
-        font-weight: 900; color: var(--cherry-red); text-transform: uppercase; letter-spacing: 2.5px;
-        background: transparent !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important;
-        line-height: 1.2;
+        font-family: 'Syne', 'JetBrains Mono', sans-serif;
+        font-size: clamp(0.55rem, 0.72cqw, 0.85rem);
+        font-weight: 900; color: #facc15; text-transform: uppercase;
+        letter-spacing: 1px; line-height: 1.2;
     }
     .c1-card-artist {
-        font-family: 'Outfit', sans-serif; font-size: clamp(1.2rem, 1.85cqw, 2.3rem);
-        font-weight: 900; color: #ffffff; text-transform: uppercase; line-height: 1.1;
-        letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(1.15rem, 1.65cqw, 2.1rem);
+        font-weight: 900; color: #ffffff; text-transform: uppercase;
+        line-height: 1.1; letter-spacing: 0.5px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .c1-card-title {
-        font-family: 'Outfit', sans-serif; font-size: clamp(0.85rem, 1.2cqw, 1.45rem);
-        font-weight: 500; color: #cbd5e1; line-height: 1.2;
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(0.85rem, 1.15cqw, 1.35rem);
+        font-weight: 600; color: #38bdf8; line-height: 1.2;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
+    /* 🟡 KORHATÁRKARIKA */
     .tv-age-rating-container {
         position: absolute; bottom: var(--rating-bottom-val, 2.0cqw); right: var(--rating-right-val, 2.8cqw);
         display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0;
@@ -433,6 +477,7 @@
     .nmhh-ring.ring-red { border: 3px solid #ef4444; }
     .nmhh-number { font-weight: 900; font-size: clamp(0.8rem, 1.5cqw, 1.35rem); color: #ffffff; }
 
+    /* 🎛️ NÉZŐI VEZÉRLŐ */
     .viewer-floating-controls {
         position: absolute; bottom: 2cqw; right: 2cqw; z-index: 99998;
         background: #090e1a; border: 1px solid rgba(255, 255, 255, 0.25);
@@ -443,6 +488,7 @@
     .viewer-floating-controls.controls-hidden { opacity: 0 !important; pointer-events: none !important; }
     .btn-viewer-act { background: transparent; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
 
+    /* 📋 MŰSORINFORMÁCIÓS SÁV */
     .viewer-schedule-bar {
         background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
         padding: 10px 14px; display: flex; flex-direction: column; gap: 6px;
@@ -452,6 +498,9 @@
     .v-pill-now { background: var(--cherry-red); color: #ffffff; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
     .v-pill-next { background: rgba(245, 158, 11, 0.2); color: #facc15; border: 1px solid rgba(245, 158, 11, 0.4); font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
 
+    /* ========================================================== */
+    /* 🛡️ REJTETT MESTER STÚDIÓ SIDE-HUD                          */
+    /* ========================================================== */
     .studio-side-hud {
         position: fixed; top: 0; right: 0; width: 420px; max-width: 95vw; height: 100vh;
         background: #070a14; border-left: 2px solid var(--cherry-red); z-index: 2147483645;
@@ -617,26 +666,31 @@
         </div>
 
         <!-- ============================================================== -->
-        <!-- 📰 MINIMALISTA PRÉMIUM ALSÓ HÍRSÁV (DOBOZMENTES, FÉNYCSÍKKAL)  -->
+        <!-- 🌍 CHERRY1 VIVA-HÍRSÁV: FORGÓ FÖLD GÖMBBEL & BÉLYEGKÉPPEL      -->
         <!-- ============================================================== -->
         <div class="tv-bottom-news-crawler" id="tv-bottom-news-crawler">
-            <svg class="bnc-logo-box" viewBox="0 0 70 100">
-                <rect x="3" y="3" width="64" height="94" rx="14" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="4.5"/>
-                <path d="M22 28 C 26 12, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                <path d="M44 28 C 42 15, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                <circle cx="22" cy="38" r="11" fill="#ff1155" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/>
-                <circle cx="20" cy="35" r="3.5" fill="#ffffff" opacity="0.75"/>
-                <circle cx="44" cy="38" r="11" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-dasharray="3,2"/>
-                <text x="35" y="85" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="rgba(255,255,255,0.88)" text-anchor="middle">1</text>
-            </svg>
-            <div class="bnc-divider"></div>
-            <div class="bnc-content">
-                <div class="bnc-header-row">
-                    <span class="bnc-source-pill" id="bnc-source-lbl">INDEX</span>
-                    <span class="bnc-time" id="bnc-time-lbl">14:00</span>
+            <!-- Forgó Vektoros Föld Gömb Box -->
+            <div class="bnc-globe-wrap">
+                <svg class="bnc-globe-svg" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="15" fill="none" stroke="var(--cherry-red)" stroke-width="1.8"/>
+                    <ellipse cx="18" cy="18" rx="15" ry="6" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+                    <ellipse cx="18" cy="18" rx="6" ry="15" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+                    <line x1="3" y1="18" x2="33" y2="18" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+                    <line x1="18" y1="3" x2="18" y2="33" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+                </svg>
+            </div>
+            <div class="bnc-wedge"></div>
+            <!-- Hírsáv Főtörzs Bélyegképpel -->
+            <div class="bnc-main-frame">
+                <img id="bnc-thumb-img" class="bnc-thumb-img" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80" alt="News">
+                <div class="bnc-content">
+                    <div class="bnc-header-row">
+                        <span class="bnc-source-pill" id="bnc-source-lbl">INDEX</span>
+                        <span class="bnc-time" id="bnc-time-lbl">14:00</span>
+                    </div>
+                    <div class="bnc-headline" id="bnc-headline-lbl">Friss hír címe...</div>
+                    <div class="bnc-desc-lbl" id="bnc-desc-lbl">Rövid hír részlet...</div>
                 </div>
-                <div class="bnc-headline" id="bnc-headline-lbl">Friss hír címe...</div>
-                <div class="bnc-desc-lbl" id="bnc-desc-lbl">Rövid hír részlet...</div>
             </div>
         </div>
 
@@ -649,7 +703,7 @@
 
         <!-- 🛡️ MESTER OSD RÉTEG -->
         <div class="tv-master-osd-layer">
-            <!-- 🍒 1. CSATORNALOGÓ (TV2-STÍLUSÚ GYÖNGYHÁZFEHÉR, 0 SÖTÉT LAYER) -->
+            <!-- 🍒 1. CSATORNALOGÓ (TV2 BROADCAST GLASS, SÖTÉT LAYER NÉLKÜL) -->
             <div class="tv-watermark-anchor pos-top-right" id="tv-watermark-anchor" onclick="handleSecretClick('logo')">
                 <div class="wm-logo-col" id="wm-main-logo-box">
                     <svg class="c1-master-logo-svg" viewBox="0 0 70 100">
@@ -686,23 +740,28 @@
             </div>
 
             <!-- ============================================================== -->
-            <!-- 🍒 3. A 7-ES MINIMALIST ARCHITECTURE DALINFÓ (DOBOZMENTES!)    -->
+            <!-- 🍒 3. CHERRY1 VIVA 1998 HIBRID DALINFÓ: PLAY/NEXT & HÁROMSZÖG     -->
             <!-- ============================================================== -->
             <div class="tv-cherry-track-card" id="tv-cherry-track-card">
-                <svg class="c1-card-emblem" viewBox="0 0 70 100">
-                    <rect x="3" y="3" width="64" height="94" rx="14" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="4.5"/>
-                    <path d="M22 28 C 26 12, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                    <path d="M44 28 C 42 15, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                    <circle cx="22" cy="38" r="11" fill="#ff1155" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/>
-                    <circle cx="20" cy="35" r="3.5" fill="#ffffff" opacity="0.75"/>
-                    <circle cx="44" cy="38" r="11" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-dasharray="3,2"/>
-                    <text x="35" y="85" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="rgba(255,255,255,0.88)" text-anchor="middle">1</text>
-                </svg>
+                <!-- Teljes logó embléma elöl a kis talpon -->
+                <div class="c1-card-emblem-box">
+                    <svg class="c1-card-emblem" viewBox="0 0 70 100">
+                        <rect x="3" y="3" width="64" height="94" rx="14" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="4.5"/>
+                        <path d="M22 28 C 26 12, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                        <path d="M44 28 C 42 15, 38 8, 48 5" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                        <circle cx="22" cy="38" r="11" fill="#ff1155" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/>
+                        <circle cx="20" cy="35" r="3.5" fill="#ffffff" opacity="0.75"/>
+                        <circle cx="44" cy="38" r="11" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-dasharray="3,2"/>
+                        <text x="35" y="85" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="rgba(255,255,255,0.88)" text-anchor="middle">1</text>
+                    </svg>
+                </div>
 
-                <div class="c1-card-divider"></div>
+                <!-- CHERRY1 Háromszög / Ék átmenet -->
+                <div class="c1-card-triangle"></div>
 
+                <!-- Főtörzs doboz finom fényéllel és Play/Next gombbal -->
                 <div class="c1-card-body">
-                    <span class="c1-card-tag" id="c1-card-tag">MOST SZÓL</span>
+                    <span class="c1-card-tag" id="c1-card-tag">▶ MOST SZÓL</span>
                     <div class="c1-card-artist" id="c1-card-artist">BALÁZS PALI</div>
                     <div class="c1-card-title" id="c1-card-title">Homok Szerelem</div>
                 </div>
@@ -896,8 +955,9 @@
 
             <div class="hud-box">
                 <span class="hud-box-title">⚡ GRAFIKAI TESZTEK AZ ÉLŐ KÉPEN</span>
-                <button class="hud-btn" onclick="triggerTrackCardTest()">🎴 Dalinfó Kártya Teszt (7-es Stílus)</button>
-                <button class="hud-btn" onclick="triggerBottomNewsCrawlerTest()">💬 Alsó Hírsáv Teszt (7-es Stílus)</button>
+                <!-- 🌟 INNEN INDÍTHATÓ AZONNALI TESZTKÉNT A VIVA-HIBRID DALINFÓ ÉS HÍRSÁV -->
+                <button class="hud-btn" onclick="triggerTrackCardTest()">🎴 Dalinfó Teszt (VIVA 1998 Play/Next)</button>
+                <button class="hud-btn" onclick="triggerBottomNewsCrawlerTest()">💬 Alsó Hírsáv Teszt (Föld Gömbbel)</button>
                 <button class="hud-btn" onclick="triggerHourlyNewsTest(false)">📰 Hírek röviden Teszt (2:17)</button>
             </div>
         </div>
@@ -974,6 +1034,7 @@
     let currentPinInput = "";
     let isStudioOpen = false;
 
+    // 🎚️ BROADCAST MASTERING AUDIO ENGINE
     let audioCtx = null;
     let sourceNode = null;
     let subRumbleFilter = null;
@@ -1074,6 +1135,7 @@
     const bncTimeLbl = document.getElementById('bnc-time-lbl');
     const bncHeadlineLbl = document.getElementById('bnc-headline-lbl');
     const bncDescLbl = document.getElementById('bnc-desc-lbl');
+    const bncThumbImg = document.getElementById('bnc-thumb-img');
 
     const unmuteBanner = document.getElementById('unmute-banner');
     const viewerControls = document.getElementById('viewer-controls');
@@ -1092,7 +1154,6 @@
         } catch(e) { return ""; }
     }
 
-    /* 🛡️ BROADCAST OSD PRIORITÁS MENEDZSER (SOHA NEM CSÚSZHATNAK EGYMÁSRA!) */
     function canShowLowerThird() {
         return !isHourlyNewsRunning && !isStationClockVisible && !colorbarLayer?.classList.contains('active');
     }
@@ -1219,7 +1280,8 @@
         } catch(e) {}
     }
 
-    function makeAnalogSoftClipCurve(amount = 18) {
+    /* 🎚️ BROADCAST MASTERING ENGINE (SAGEMCOM 48kHz & BUFFER FIX) */
+    function makeAnalogSoftClipCurve(amount = 14) {
         const n = 44100;
         const curve = new Float32Array(n);
         for (let i = 0; i < n; ++i) {
@@ -1233,7 +1295,12 @@
         if (audioCtx) return;
         try {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContextClass();
+            try {
+                audioCtx = new AudioContextClass({ sampleRate: 48000, latencyHint: "playback" });
+            } catch(err) {
+                audioCtx = new AudioContextClass();
+            }
+
             sourceNode = audioCtx.createMediaElementSource(player);
 
             subRumbleFilter = audioCtx.createBiquadFilter();
@@ -1250,8 +1317,8 @@
             compressorNode = audioCtx.createDynamicsCompressor();
 
             softSaturator = audioCtx.createWaveShaper();
-            softSaturator.curve = makeAnalogSoftClipCurve(18);
-            softSaturator.oversample = "2x";
+            softSaturator.curve = makeAnalogSoftClipCurve(14);
+            softSaturator.oversample = "none";
 
             limiterNode = audioCtx.createDynamicsCompressor();
             analyserNode = audioCtx.createAnalyser();
@@ -1449,19 +1516,17 @@
         document.getElementById('val-badge-left').textContent = `${bl} cqw`;
         document.getElementById('val-badge-scale').textContent = `${bscale}%`;
 
-        const containerEl = document.getElementById('tv-screen-container');
-        if (containerEl) {
-            containerEl.style.setProperty('--logo-top-val', `${lt}cqw`);
-            containerEl.style.setProperty('--logo-side-val', `${lsSide}cqw`);
-            containerEl.style.setProperty('--logo-scale-val', `${lsScale / 100}`);
-            containerEl.style.setProperty('--rating-bottom-val', `${rb}cqw`);
-            containerEl.style.setProperty('--rating-right-val', `${rr}cqw`);
-            containerEl.style.setProperty('--rating-size-val', `${rs}cqw`);
+        const root = document.documentElement;
+        root.style.setProperty('--logo-top-val', `${lt}cqw`);
+        root.style.setProperty('--logo-side-val', `${lsSide}cqw`);
+        root.style.setProperty('--logo-scale-val', `${lsScale / 100}`);
+        root.style.setProperty('--rating-bottom-val', `${rb}cqw`);
+        root.style.setProperty('--rating-right-val', `${rr}cqw`);
+        root.style.setProperty('--rating-size-val', `${rs}cqw`);
+        root.style.setProperty('--badge-top-val', `${bt}cqw`);
+        root.style.setProperty('--badge-left-val', `${bl}cqw`);
+        root.style.setProperty('--badge-scale-val', `${bscale / 100}`);
 
-            containerEl.style.setProperty('--badge-top-val', `${bt}cqw`);
-            containerEl.style.setProperty('--badge-left-val', `${bl}cqw`);
-            containerEl.style.setProperty('--badge-scale-val', `${bscale / 100}`);
-        }
         evaluateAgeRatingVisibility();
     }
 
@@ -1626,7 +1691,7 @@
         }
     }
 
-    /* 🎬 KLIPIDŐ FIGYELÉS: A DAL VÉGE NINCS LEVÁGVA, TERMÉSZETESEN FUSSON KI! */
+    /* 🎬 KLIPIDŐ FIGYELÉS: A DAL VÉGE TERMÉSZETESEN FUSSON KI */
     player.ontimeupdate = () => {
         if (!isTvBroadcasting || isHourlyNewsRunning) return;
         const todayKey = getSelectedDateKey(0);
@@ -1642,7 +1707,8 @@
 
         if (curTime >= 5.0 && curTime < 12.0 && !introTriggeredForTrack) {
             introTriggeredForTrack = true;
-            setCherryTrackCard("MOST SZÓL", curClip.title);
+            // 🌟 PLAY SZIMBÓLUM A DAL ELEJÉN:
+            setCherryTrackCard("▶ MOST SZÓL", curClip.title);
             showCherryTrackCard();
             setTimeout(() => {
                 if (introTriggeredForTrack && outroStep === 0) hideCherryTrackCard();
@@ -1653,7 +1719,7 @@
             startOutroTrackSequence(schedule, curClip, playbackSessionId);
         }
 
-        // 🌟 Csak a legutolsó 0.8 másodpercben indul el a lágy broadcast áttűnés!
+        // 🌟 Csak a legutolsó 0.8 másodpercben indul el a lágy áttűnés:
         if (remaining <= 0.8 && remaining > 0 && !isVideoTransitioning) {
             advanceToNextScheduledClip();
         }
@@ -1669,13 +1735,14 @@
         outroStep = 1;
         const nextClip = schedule[(currentClipIndex + 1) % schedule.length];
 
-        setCherryTrackCard("MOST SZÓL", curClip.title);
+        setCherryTrackCard("▶ MOST SZÓL", curClip.title);
         showCherryTrackCard();
 
         outroStepTimer = setTimeout(() => {
             if (sessionId !== playbackSessionId) return;
             outroStep = 2;
-            if (nextClip) setCherryTrackCard("KÖVETKEZIK", nextClip.title);
+            // 🌟 FAST-FORWARD / NEXT TRACK SZIMBÓLUM A DAL VÉGÉN:
+            if (nextClip) setCherryTrackCard("⏭ KÖVETKEZIK", nextClip.title);
             outroStepTimer = setTimeout(() => {
                 if (sessionId !== playbackSessionId) return;
                 hideCherryTrackCard();
@@ -1688,7 +1755,6 @@
         executeClipTransition();
     }
 
-    /* 🎬 VAJPUHA TELEVÍZIÓS ÁTTŰNÉS (BROADCAST BRIDGE) */
     function executeClipTransition(customTargetIndex = -1) {
         const todayKey = getSelectedDateKey(0);
         const schedule = weekSchedules[todayKey] || [];
@@ -1713,7 +1779,6 @@
         hideColorBarScreen();
         updateViewerUnderBarInfo();
 
-        // 🌟 1. Finom fekete áttűnés a forráscsere pillanatában (nem fagy be a kép, nincs ugrás):
         player.classList.add('fading');
 
         setTimeout(() => {
@@ -1742,7 +1807,10 @@
 
     function setCherryTrackCard(badgeText, rawTitle) {
         const parsed = parseArtistAndTitle(rawTitle);
-        if (c1CardTag) c1CardTag.textContent = badgeText;
+        if (c1CardTag) {
+            c1CardTag.textContent = badgeText;
+            c1CardTag.style.color = badgeText.includes("KÖVETKEZIK") ? "var(--accent-amber)" : "var(--cherry-red)";
+        }
         if (c1CardArtist) c1CardArtist.textContent = parsed.artist.toUpperCase();
         if (c1CardTitle) {
             c1CardTitle.textContent = parsed.title;
@@ -1753,7 +1821,6 @@
     /* 🛡️ SOHA NEM CSÚSZHATNAK EGYMÁSRA A FELIRATOK! */
     function showCherryTrackCard() {
         if (!canShowLowerThird()) return;
-        // Azonnal leállítjuk az alsó hírsávot és az EPG-t ha a dalinfó beúszik:
         endBottomNewsCrawler();
         if (tvEpgGuideBanner) tvEpgGuideBanner.classList.remove('active');
 
@@ -1767,11 +1834,12 @@
         cherryTrackCard.classList.remove('card-active');
     }
 
+    /* 🌟 AZONNALI TESZTGOMBOK (CHERRY VIVA HIBRID STÍLUS) */
     function triggerTrackCardTest() {
-        setCherryTrackCard("MOST SZÓL", "Balázs Pali - Homok Szerelem");
+        setCherryTrackCard("▶ MOST SZÓL", "Balázs Pali - Homok Szerelem");
         showCherryTrackCard();
         setTimeout(() => {
-            setCherryTrackCard("KÖVETKEZIK", "Manuel x Valmar - Budapest By Night");
+            setCherryTrackCard("⏭ KÖVETKEZIK", "Manuel x Valmar - Budapest By Night");
             setTimeout(hideCherryTrackCard, 4500);
         }, 4000);
     }
@@ -1826,7 +1894,13 @@
         
         // 🌟 MINDIG A LEGFRISSEBB HÍREKET MUTATJUK:
         const freshStories = (rawNewsStories.length > 0) ? rawNewsStories.slice(0, 4) : [
-            { title: "Cherry1 Music Television: 24 órás HD zenei adás", description: "A legfrissebb slágerek tévén is akadásmentesen.", source: "CHERRY1", date: new Date().toISOString() }
+            { 
+                title: "Cherry1 Music Television: 24 órás digitális zenei adás", 
+                description: "A legfrissebb hazai és nemzetközi slágerek kristálytiszta minőségben a képernyőn.", 
+                source: "CHERRY1", 
+                date: new Date().toISOString(),
+                image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80"
+            }
         ];
 
         isCrawlerActive = true;
@@ -1845,6 +1919,9 @@
         if (bncTimeLbl) bncTimeLbl.textContent = formatNewsExactTime(item.date);
         if (bncHeadlineLbl) bncHeadlineLbl.textContent = item.title;
         if (bncDescLbl) bncDescLbl.textContent = item.description || item.title;
+        if (bncThumbImg) {
+            bncThumbImg.src = item.image || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80";
+        }
 
         tvBottomNewsCrawler.classList.add('active');
 
@@ -1868,7 +1945,7 @@
     }
 
     /* ========================================================== */
-    /* 📰 2 PERC 17 MP HÍRADÓ: A LEGFRISSEBB HÍREKKEL             */
+    /* 📰 2 PERC 17 MP HÍRADÓ                                     */
     /* ========================================================== */
     function startHourlyNewsBulletin(isManualTest = false, forceMidnight = false) {
         if (isHourlyNewsRunning) return;
@@ -1933,7 +2010,6 @@
 
         hourlyNewsMagazine.classList.add('active');
 
-        // 🌟 A LEGFRISSEBB 6 HÍR KIEMELÉSE (CSÖKKENŐBEN RENDEZVE):
         let activeStories = (rawNewsStories.length >= 6) ? rawNewsStories.slice(0, 6) : [
             { title: "Cherry1 Music: 24 órás digitális zenei adás", description: "Friss slágerek kristálytiszta minőségben.", source: "CHERRY1", date: new Date().toISOString() }
         ];
@@ -2360,6 +2436,9 @@
     tvScreenContainer.addEventListener('mousemove', resetControlsTimer);
     tvScreenContainer.addEventListener('click', resetControlsTimer);
 
+    /* ========================================================== */
+    /* 🌐 FELHŐ SZINKRON (A STÚDIÓBÓL 100%-BAN FELÜLÍR MINDENT!)  */
+    /* ========================================================== */
     async function loadCloudState(notifyUser = false) {
         try {
             const [cloudSettings, cloudSched] = await Promise.all([
@@ -2376,47 +2455,32 @@
                 if (cloudSettings.enable_daytime_news !== undefined) enableDaytimeNews = Boolean(cloudSettings.enable_daytime_news);
                 if (cloudSettings.enable_midnight_news !== undefined) enableMidnightNews = Boolean(cloudSettings.enable_midnight_news);
 
+                const root = document.documentElement;
+                if (cloudSettings.logo_pos_t !== undefined) root.style.setProperty('--logo-top-val', `${cloudSettings.logo_pos_t}cqw`);
+                if (cloudSettings.logo_pos_side !== undefined) root.style.setProperty('--logo-side-val', `${cloudSettings.logo_pos_side}cqw`);
+                if (cloudSettings.logo_scale !== undefined) root.style.setProperty('--logo-scale-val', `${cloudSettings.logo_scale / 100}`);
+
+                if (cloudSettings.rating_pos_b !== undefined) root.style.setProperty('--rating-bottom-val', `${cloudSettings.rating_pos_b}cqw`);
+                if (cloudSettings.rating_pos_r !== undefined) root.style.setProperty('--rating-right-val', `${cloudSettings.rating_pos_r}cqw`);
+                if (cloudSettings.rating_pos_s !== undefined) root.style.setProperty('--rating-size-val', `${cloudSettings.rating_pos_s}cqw`);
+
+                if (cloudSettings.logo_corner) setLogoCorner(cloudSettings.logo_corner);
+
                 if (cloudSettings.logo_pos_t && document.getElementById('rng-logo-t')) document.getElementById('rng-logo-t').value = cloudSettings.logo_pos_t;
                 if (cloudSettings.logo_pos_side && document.getElementById('rng-logo-s')) document.getElementById('rng-logo-s').value = cloudSettings.logo_pos_side;
                 if (cloudSettings.logo_scale && document.getElementById('rng-logo-scale')) document.getElementById('rng-logo-scale').value = cloudSettings.logo_scale;
-                
                 if (cloudSettings.rating_pos_b && document.getElementById('rng-rating-b')) document.getElementById('rng-rating-b').value = cloudSettings.rating_pos_b;
                 if (cloudSettings.rating_pos_r && document.getElementById('rng-rating-r')) document.getElementById('rng-rating-r').value = cloudSettings.rating_pos_r;
                 if (cloudSettings.rating_pos_s && document.getElementById('rng-rating-size')) document.getElementById('rng-rating-size').value = cloudSettings.rating_pos_s;
 
-                if (cloudSettings.show_brand_badge !== undefined) {
-                    showBrandBadge = Boolean(cloudSettings.show_brand_badge);
-                    const btn = document.getElementById('hud-btn-badge-toggle');
-                    if (btn) {
-                        btn.textContent = showBrandBadge ? "BE" : "KI";
-                        btn.classList.toggle('active-toggle', showBrandBadge);
-                    }
-                    if (brandBadgeAnchor) brandBadgeAnchor.classList.toggle('active', showBrandBadge);
-                }
-                if (cloudSettings.badge_pos_t && document.getElementById('rng-badge-t')) document.getElementById('rng-badge-t').value = cloudSettings.badge_pos_t;
-                if (cloudSettings.badge_pos_l && document.getElementById('rng-badge-l')) document.getElementById('rng-badge-l').value = cloudSettings.badge_pos_l;
-                if (cloudSettings.badge_scale && document.getElementById('rng-badge-scale')) document.getElementById('rng-badge-scale').value = cloudSettings.badge_scale;
-
-                if (cloudSettings.limiterParams) {
-                    limParams = cloudSettings.limiterParams;
-                    if (document.getElementById('rng-lim-gain')) {
-                        document.getElementById('rng-lim-gain').value = limParams.gainDb;
-                        document.getElementById('rng-lim-thresh').value = limParams.threshDb;
-                        document.getElementById('rng-lim-ratio').value = limParams.ratio;
-                        document.getElementById('rng-lim-rel').value = limParams.relMs;
-                        document.getElementById('rng-lim-ceil').value = limParams.ceilDb;
-                    }
-                }
-
-                if (cloudSettings.logo_corner) setLogoCorner(cloudSettings.logo_corner);
                 if (cloudSettings.aspect_ratio_mode) {
                     currentAspectRatioMode = cloudSettings.aspect_ratio_mode;
                     const sel = document.getElementById('hud-sel-aspect');
                     if (sel) sel.value = currentAspectRatioMode;
                     applyAspectModeChange(currentAspectRatioMode);
                 }
-                applyOsdLiveSliders();
-                applyManualLimiterParams();
+
+                evaluateAgeRatingVisibility();
             }
 
             if (cloudSched && typeof cloudSched === 'object' && Object.keys(cloudSched).length > 0) {
@@ -2428,7 +2492,7 @@
         } catch(e){}
     }
 
-    /* 📰 HÍREK LEKÉRÉSE: MINDIG A LEGFRISSEBB KERÜL ELŐRE (DATE DESC) */
+    /* 📰 HÍREK LEKÉRÉSE: A LEGFRISSEBB HÍREK MINDIG ELŐRE KERÜLNEK */
     async function fetchLiveNews() {
         try {
             const res = await fetch(`${WORKER_URL}?_t=${Date.now()}`);
@@ -2441,7 +2505,6 @@
                     list = Array.isArray(data.news) ? data.news : Object.values(data.news);
                 }
 
-                // 🌟 IDŐRENDI CSÖKKENŐ RENDEZÉS: A legújabb hír az 1. indexre kerül!
                 rawNewsStories = list.map(item => ({
                     title: (item.title || "").trim(),
                     description: (item.description || item.summary || "").trim(),
