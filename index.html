@@ -139,7 +139,7 @@
     /* 🕰️ ANALÓG ADÁSÓRA */
     .tv-station-clock-overlay {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        z-index: 99980; background: radial-gradient(circle at center, rgba(10, 14, 26, 0.82) 0%, rgba(2, 4, 10, 0.95) 100%);
+        z-index: 99980; background: radial-gradient(circle at center, rgba(10, 14, 26, 0.85) 0%, rgba(2, 4, 10, 0.95) 100%);
         display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
         user-select: none; opacity: 0; transition: opacity 0.4s ease;
         contain: layout style paint;
@@ -149,19 +149,19 @@
         width: clamp(230px, 32cqw, 360px); height: clamp(230px, 32cqw, 360px); border-radius: 50%;
         background: radial-gradient(circle, #0e1424 0%, #050811 100%);
         border: 3px solid rgba(255, 255, 255, 0.45);
-        box-shadow: 0 0 35px rgba(255,17,85,0.4), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 0 25px rgba(0,0,0,0.8);
+        box-shadow: 0 4px 25px rgba(0,0,0,0.9);
         display: flex; align-items: center; justify-content: center; position: relative;
     }
     .analog-clock-svg { width: 100%; height: 100%; }
     .clock-title-badge {
         display: flex; flex-direction: column; align-items: center; gap: 3px;
         background: #0b0f1c; border: 2px solid var(--cherry-red); padding: 8px 24px; border-radius: 30px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 20px rgba(0,0,0,0.85);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.85);
     }
     .clock-title-text { font-weight: 900; font-size: clamp(0.95rem, 1.4cqw, 1.3rem); color: #fff; letter-spacing: 0.5px; }
     .clock-sub-text { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.70rem, 0.95cqw, 0.90rem); font-weight: 800; color: var(--accent-cyan); }
 
-    /* 📰 HÍREK RÖVIDEN MAGAZIN – 100%-BAN ÁTLÁTSZÓ, TISZTA HÁTTÉRVIDEÓVAL */
+    /* 📰 HÍREK RÖVIDEN MAGAZIN – 100% TISZTA HÁTTÉRVIDEÓVAL, NULLA LAG */
     .tv-hourly-news-magazine {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99985; background: transparent !important;
@@ -181,7 +181,6 @@
         text-shadow: 0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.95); letter-spacing: 0.5px;
     }
 
-    /* Nulla háttérréteg: a gyönyörű videó teljesen érvényesül */
     .magazine-body-grid {
         display: grid; grid-template-columns: 44% 53%; gap: 3%; align-items: center; flex: 1;
         background: transparent !important; border: none !important; box-shadow: none !important;
@@ -189,21 +188,21 @@
         padding: 0.8cqw 0 !important; margin: 0.5cqw 0;
         position: relative; overflow: hidden;
     }
-    .magazine-body-grid.comb-in { animation: newsCombIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .magazine-body-grid.comb-out { animation: newsCombOut 0.4s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
+    .magazine-body-grid.comb-in { animation: newsCombIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .magazine-body-grid.comb-out { animation: newsCombOut 0.35s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
     @keyframes newsCombIn { 0% { transform: translate3d(0, 25px, 0); opacity: 0; } 100% { transform: translate3d(0, 0, 0); opacity: 1; } }
     @keyframes newsCombOut { 0% { transform: translate3d(0, 0, 0); opacity: 1; } 100% { transform: translate3d(0, -20px, 0); opacity: 0; } }
 
     .mag-image-wrap {
         width: 100%; aspect-ratio: 16 / 9; max-height: clamp(140px, 22cqw, 270px);
         border-radius: 10px; overflow: hidden; background: #000; border: 2px solid rgba(255,255,255,0.4); position: relative;
-        box-shadow: 0 10px 35px rgba(0,0,0,0.95);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.9);
     }
     .mag-image-sharp-fg { width: 100%; height: 100%; object-fit: cover; }
     .mag-source-overlay {
         position: absolute; bottom: 0.6cqw; left: 0.6cqw; background: var(--cherry-red); color: #fff;
         font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: clamp(0.58rem, 0.8cqw, 0.88rem);
-        padding: 2px 8px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.9); text-transform: uppercase;
+        padding: 2px 8px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.9); text-transform: uppercase;
     }
     .mag-details-col {
         display: flex; flex-direction: column; gap: 0.6cqw;
@@ -225,7 +224,7 @@
 
     .mag-progress-rail {
         position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
-        background: rgba(255, 255, 255, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        background: rgba(255, 255, 255, 0.2);
     }
     .mag-progress-fill {
         height: 100%; width: 100%; background: linear-gradient(90deg, var(--cherry-red), #38bdf8);
@@ -239,9 +238,9 @@
         display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 0.8cqw; width: 100%;
     }
     .weather-card-rich {
-        background: rgba(8, 12, 24, 0.55); border: 1px solid rgba(255, 255, 255, 0.3); border-top: 3px solid var(--cherry-red);
+        background: rgba(8, 12, 24, 0.65); border: 1px solid rgba(255, 255, 255, 0.3); border-top: 3px solid var(--cherry-red);
         border-radius: 8px; padding: 0.6cqw 1.0cqw; display: flex; flex-direction: column; justify-content: space-between;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.85); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.85);
         contain: layout style paint;
     }
     .wcr-city-row { display: flex; justify-content: space-between; align-items: center; }
@@ -264,19 +263,22 @@
     @keyframes pulseMoon { 0% { opacity: 0.85; } 100% { filter: drop-shadow(0 0 6px rgba(56,189,248,0.9)); } }
     @keyframes rainFall { 0% { transform: translateY(-3px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
 
-    /* 📺 PRESTIGE EPG SÁV (NOW & NEXT + BORÍTÓKÉP) */
+    /* 📺 PRESTIGE EPG SÁV – VAJPUHA 60 FPS GPU OPTIMALIZÁLT KIVITEL */
     .tv-epg-guide-banner {
         position: absolute; bottom: 2.2cqw; left: 2.5cqw; right: 2.5cqw; z-index: 9997;
-        background: linear-gradient(135deg, rgba(8, 12, 26, 0.96) 0%, rgba(18, 8, 22, 0.94) 100%);
-        border: 0.16cqw solid rgba(255, 17, 85, 0.45); border-left: 0.48cqw solid var(--theme-primary);
-        border-radius: 1.2cqw; padding: 0.9cqw 1.4cqw; display: none; flex-direction: column; gap: 0.7cqw;
-        box-shadow: 0 16px 45px rgba(0,0,0,0.95), 0 0 25px rgba(255,17,85,0.3);
-        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); opacity: 0; pointer-events: none;
+        background: #080c1a;
+        border: 1.5px solid rgba(255, 17, 85, 0.55); border-left: 0.48cqw solid var(--theme-primary);
+        border-radius: 1.2cqw; padding: 0.9cqw 1.4cqw;
+        display: flex; flex-direction: column; gap: 0.7cqw;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.95);
+        opacity: 0; pointer-events: none; visibility: hidden;
         transform: translate3d(0, 35px, 0); will-change: transform, opacity;
-        contain: layout style paint;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.4s;
     }
-    .tv-epg-guide-banner.active { display: flex; animation: epgSlideInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes epgSlideInUp { 0% { transform: translate3d(0, 35px, 0); opacity: 0; } 100% { transform: translate3d(0, 0, 0); opacity: 1; } }
+    .tv-epg-guide-banner.active {
+        opacity: 1 !important; visibility: visible !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
 
     .epg-top-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 0.4cqw; }
     .epg-header-tag {
@@ -322,7 +324,7 @@
         background: rgba(8, 12, 24, 0.94); border: 1.5px solid rgba(255, 255, 255, 0.18);
         border-left: none; border-right: 3.8px solid var(--cherry-red); border-radius: 0 10px 10px 0;
         padding: 0.65cqw 1.1cqw; display: flex; flex-direction: column; gap: 0.4cqw;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 14px 40px rgba(0,0,0,0.92);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.92);
     }
     .snw-header-row { display: flex; align-items: center; gap: 6px; }
     .snw-badge { font-family: 'Syne', sans-serif; font-size: clamp(0.55rem, 0.72cqw, 0.85rem); font-weight: 900; color: var(--cherry-red); letter-spacing: 0.5px; }
@@ -345,7 +347,7 @@
     .tv-master-osd-layer {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 200000; pointer-events: none !important;
-        contain: layout style paint;
+        transform: translate3d(0, 0, 0);
     }
 
     /* 🍒 1. CSATORNALOGÓ */
@@ -400,7 +402,7 @@
         display: flex; align-items: center; gap: 0; max-width: 72cqw;
         background: transparent !important; border: none !important; box-shadow: none !important;
         padding: 0 !important; opacity: 0; transform: translate3d(-35px, 0, 0);
-        transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         pointer-events: none; contain: layout style;
     }
     .tv-cherry-track-card.card-active {
@@ -412,13 +414,12 @@
         width: 4.8cqw; height: 4.8cqw; min-width: 42px; min-height: 42px;
         background: #080c18; border: 2px solid var(--cherry-red); border-right: none;
         border-radius: 8px 0 0 8px; flex-shrink: 0; overflow: hidden;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 25px rgba(0,0,0,0.85);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.85);
         position: relative;
     }
     .c1-card-art-img {
         width: 100%; height: 100%; object-fit: cover;
-        transition: opacity 0.25s ease, transform 0.25s ease;
-        will-change: opacity, transform;
+        transition: opacity 0.25s ease; will-change: opacity;
     }
     .c1-card-art-fallback {
         width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
@@ -443,7 +444,7 @@
         border: 2px solid var(--cherry-red); border-left: none;
         border-radius: 0 8px 8px 0;
         padding: 0.6cqw 1.6cqw 0.6cqw 0.8cqw;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 30px rgba(0,0,0,0.9);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.85);
     }
     .c1-card-tag {
         font-family: 'Syne', 'JetBrains Mono', sans-serif;
@@ -488,7 +489,7 @@
         background: #090e1a; border: 1px solid rgba(255, 255, 255, 0.25);
         padding: 6px 14px; border-radius: 25px; display: flex; align-items: center; gap: 10px;
         opacity: 1; transition: opacity 0.3s ease;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 20px rgba(0,0,0,0.8);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.8);
     }
     .viewer-floating-controls.controls-hidden { opacity: 0 !important; pointer-events: none !important; }
     .btn-viewer-act { background: transparent; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
@@ -496,7 +497,6 @@
     .viewer-schedule-bar {
         background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
         padding: 10px 14px; display: flex; flex-direction: column; gap: 6px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
     }
     .v-meta-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 0.85rem; }
     .v-pill-now { background: var(--cherry-red); color: #ffffff; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
@@ -532,7 +532,6 @@
     .hud-box {
         background: #0d1224; border: 1px solid rgba(255,255,255,0.12);
         border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
     }
     .hud-box-title { font-size: 0.75rem; font-weight: 900; color: var(--cherry-red); text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -631,7 +630,7 @@
             </div>
         </div>
 
-        <!-- 📰 HÍREK RÖVIDEN MAGAZIN – TELJESEN LÁTHATÓ VIDEÓHÁTTÉRREL -->
+        <!-- 📰 HÍREK RÖVIDEN MAGAZIN -->
         <div class="tv-hourly-news-magazine" id="tv-hourly-news-magazine">
             <div class="mag-top-header">
                 <span class="mag-main-title-txt" id="mag-main-title-txt">Hírek röviden</span>
@@ -660,7 +659,7 @@
             </div>
         </div>
 
-        <!-- 📺 PRESTIGE EPG SÁV -->
+        <!-- 📺 PRESTIGE EPG SÁV (VAJPUHA GPU ANIMÁCIÓ, NULLA AKADÁS) -->
         <div class="tv-epg-guide-banner" id="tv-epg-guide-banner">
             <div class="epg-top-bar">
                 <div class="epg-header-tag">ÉLŐBEN KÖVETKEZIK</div>
@@ -750,7 +749,7 @@
                 </div>
             </div>
 
-            <!-- 🍒 3. CHERRY1 VIVA 1998 HIBRID DALINFÓ TŰÉLES BORÍTÓVAL -->
+            <!-- 🍒 3. CHERRY1 VIVA 1998 HIBRID DALINFÓ -->
             <div class="tv-cherry-track-card" id="tv-cherry-track-card">
                 <div class="c1-card-art-box" id="c1-card-art-box">
                     <img id="c1-card-art-img" class="c1-card-art-img" src="" alt="Cover" decoding="async" style="display:none;">
@@ -1023,6 +1022,7 @@
     let customMidnightBgVideoUrl = "";
     let isHourlyNewsRunning = false;
     let isStationClockVisible = false;
+    let newsHardTimeout = null;
 
     let randomClockTriggerSec = Math.floor(Math.random() * 16) + 30;
 
@@ -1032,6 +1032,7 @@
     let isTrackCardOpen = false;
     let outroStep = 0;
     let outroStepTimer = null;
+    let isNextCoverPreloaded = false;
 
     let isSideWidgetActive = false;
     let sideNewsPointer = 0;
@@ -1046,7 +1047,6 @@
     let currentPinInput = "";
     let isStudioOpen = false;
 
-    // 💿 LEMEZBORÍTÓ GYORSÍTÓTÁR TISZTÍTÁSA (A hibás null értékek kiszűrése)
     let coverArtMemoryCache = {};
     try {
         const localCovers = JSON.parse(localStorage.getItem(STORAGE_KEY_COVERS));
@@ -1286,7 +1286,6 @@
             const cleanTitle = (title || '').replace(/\b(feat|ft|x|with)\b.*$/i, '').trim();
             const query = `${cleanArtist} ${cleanTitle}`.trim();
             
-            // 1. Kísérlet: iTunes JSONP (Apple Music HD 600x600)
             const itunesCbName = 'itunes_cb_' + Math.random().toString(36).substr(2, 9);
             const scriptItunes = document.createElement('script');
             let isResolved = false;
@@ -1302,12 +1301,11 @@
                     try { localStorage.setItem(STORAGE_KEY_COVERS, JSON.stringify(coverArtMemoryCache)); } catch(e){}
                     resolve(url);
                 } else {
-                    // 2. Kísérlet: Deezer JSONP tartalék (Hazai és retro zenékhez kiváló)
                     fetchDeezerCoverFallback(query, cacheKey, resolve);
                 }
             };
 
-            const timeout = setTimeout(() => { finalize(null); }, 3500);
+            const timeout = setTimeout(() => { finalize(null); }, 3000);
 
             window[itunesCbName] = function(data) {
                 clearTimeout(timeout);
@@ -1344,7 +1342,7 @@
         const timer = setTimeout(() => {
             cleanUpDeezer();
             resolve(null);
-        }, 3500);
+        }, 3000);
 
         window[deezerCb] = function(res) {
             cleanUpDeezer();
@@ -1848,6 +1846,14 @@
         }
     }
 
+    // 🛡️ AUTOMATA WATCHDOG: Ha egy klip nem tud betöltődni, 1.2 mp múlva átlép a következőre
+    player.onerror = () => {
+        if (!isTvBroadcasting || isHourlyNewsRunning || isVideoTransitioning) return;
+        setTimeout(() => {
+            advanceToNextScheduledClip();
+        }, 1200);
+    };
+
     player.ontimeupdate = () => {
         if (!isTvBroadcasting || isHourlyNewsRunning) return;
         const todayKey = getSelectedDateKey(0);
@@ -1855,7 +1861,7 @@
         if (schedule.length === 0 || currentClipIndex === -1) return;
 
         const curClip = schedule[currentClipIndex];
-        if (!curClip || curClip.isLiveStream) return;
+        if (!curClip || curClip.isLiveStream || curClip.isNews) return;
 
         const curTime = player.currentTime || 0;
         const duration = (player.duration && !isNaN(player.duration) && player.duration > 10) ? player.duration : (curClip.duration || 180);
@@ -1874,8 +1880,14 @@
             startOutroTrackSequence(schedule, curClip, playbackSessionId);
         }
 
-        if (remaining <= 15.0 && remaining > 2.5) {
-            const nextClip = schedule[(currentClipIndex + 1) % schedule.length];
+        // 🛡️ PONTOSAN 1-SZER FUTÓ ELŐTÖLTÉS (Nincs request-cunami és akadás!)
+        if (remaining <= 15.0 && remaining > 2.5 && !isNextCoverPreloaded) {
+            isNextCoverPreloaded = true;
+            let nextIndex = (currentClipIndex + 1) % schedule.length;
+            while (schedule[nextIndex] && schedule[nextIndex].isNews && schedule.length > 1) {
+                nextIndex = (nextIndex + 1) % schedule.length;
+            }
+            const nextClip = schedule[nextIndex];
             if (nextClip) {
                 const nextParsed = parseArtistAndTitle(nextClip.title);
                 fetchCoverArtUrl(nextParsed.artist, nextParsed.title);
@@ -1895,7 +1907,12 @@
     function startOutroTrackSequence(schedule, curClip, sessionId) {
         if (sessionId !== playbackSessionId) return;
         outroStep = 1;
-        const nextClip = schedule[(currentClipIndex + 1) % schedule.length];
+
+        let nextIdx = (currentClipIndex + 1) % schedule.length;
+        while (schedule[nextIdx] && schedule[nextIdx].isNews && schedule.length > 1) {
+            nextIdx = (nextIdx + 1) % schedule.length;
+        }
+        const nextClip = schedule[nextIdx];
 
         setCherryTrackCard("▶ MOST SZÓL", curClip.title, false);
         showCherryTrackCard();
@@ -1916,6 +1933,7 @@
         executeClipTransition();
     }
 
+    // 🛡️ HÍREK ÁTUGORÁSA A ZENEI LÁNCBAN
     function executeClipTransition(customTargetIndex = -1) {
         const todayKey = getSelectedDateKey(0);
         const schedule = weekSchedules[todayKey] || [];
@@ -1924,11 +1942,16 @@
         isVideoTransitioning = true;
         playbackSessionId++;
         introTriggeredForTrack = false;
+        isNextCoverPreloaded = false;
         outroStep = 0;
         if (outroStepTimer) clearTimeout(outroStepTimer);
         hideCherryTrackCard();
 
-        const nextIdx = (customTargetIndex !== -1) ? customTargetIndex : ((currentClipIndex + 1) % schedule.length);
+        let nextIdx = (customTargetIndex !== -1) ? customTargetIndex : ((currentClipIndex + 1) % schedule.length);
+        while (schedule[nextIdx] && schedule[nextIdx].isNews && schedule.length > 1) {
+            nextIdx = (nextIdx + 1) % schedule.length;
+        }
+
         currentClipIndex = nextIdx;
         const newClip = schedule[nextIdx];
 
@@ -1966,7 +1989,7 @@
         }
     }
 
-    /* 🍒 MEGBÍZHATÓ BORÍTÓMEGJELENÍTŐ (VIVA 1998 HIBRID TÁROLÓ) */
+    /* 🍒 60 FPS LEMEZBORÍTÓ MEGJELENÍTŐ (NULLA FRAME-DROP) */
     async function setCherryTrackCard(badgeText, rawTitle, isFlip = false) {
         const parsed = parseArtistAndTitle(rawTitle);
         if (c1CardTag) {
@@ -1977,27 +2000,13 @@
         const displayArtist = parsed.artist.toUpperCase();
         const displayTitle = parsed.title;
 
-        // Aszinkron lemezborító lekérése (iTunes / Deezer JSONP)
-        const coverUrl = await fetchCoverArtUrl(parsed.artist, parsed.title);
-
-        const applyArt = () => {
-            if (coverUrl && c1CardArtImg) {
-                c1CardArtImg.src = coverUrl;
-                c1CardArtImg.style.display = 'block';
-                if (c1CardArtFallback) c1CardArtFallback.style.display = 'none';
-            } else {
-                if (c1CardArtImg) c1CardArtImg.style.display = 'none';
-                if (c1CardArtFallback) c1CardArtFallback.style.display = 'flex';
-            }
-        };
-
+        // Azonnali feliratfrissítés
         if (isFlip) {
             if (c1CardArtist) { c1CardArtist.style.opacity = '0'; c1CardArtist.style.transform = 'translateY(-4px)'; }
             if (c1CardTitle) { c1CardTitle.style.opacity = '0'; c1CardTitle.style.transform = 'translateY(-4px)'; }
             if (c1CardArtImg) { c1CardArtImg.style.opacity = '0'; }
 
             setTimeout(() => {
-                applyArt();
                 if (c1CardArtist) {
                     c1CardArtist.textContent = displayArtist;
                     c1CardArtist.style.opacity = '1';
@@ -2009,10 +2018,8 @@
                     c1CardTitle.style.opacity = '1';
                     c1CardTitle.style.transform = 'translateY(0)';
                 }
-                if (c1CardArtImg) { c1CardArtImg.style.opacity = '1'; }
-            }, 240);
+            }, 200);
         } else {
-            applyArt();
             if (c1CardArtist) {
                 c1CardArtist.style.opacity = '1'; c1CardArtist.style.transform = 'translateY(0)';
                 c1CardArtist.textContent = displayArtist;
@@ -2023,8 +2030,22 @@
                 c1CardTitle.style.opacity = '1';
                 c1CardTitle.style.transform = 'translateY(0)';
             }
-            if (c1CardArtImg) { c1CardArtImg.style.opacity = '1'; }
         }
+
+        // Kép betöltése a háttérben, UI szál blokkolása nélkül
+        fetchCoverArtUrl(parsed.artist, parsed.title).then(coverUrl => {
+            if (coverUrl && c1CardArtImg) {
+                c1CardArtImg.onload = () => {
+                    c1CardArtImg.style.display = 'block';
+                    c1CardArtImg.style.opacity = '1';
+                    if (c1CardArtFallback) c1CardArtFallback.style.display = 'none';
+                };
+                c1CardArtImg.src = coverUrl;
+            } else {
+                if (c1CardArtImg) { c1CardArtImg.style.display = 'none'; c1CardArtImg.style.opacity = '0'; }
+                if (c1CardArtFallback) c1CardArtFallback.style.display = 'flex';
+            }
+        });
     }
 
     function showCherryTrackCard() {
@@ -2068,7 +2089,8 @@
         showUpcomingEpgGuide();
     }
 
-    async function showUpcomingEpgGuide() {
+    /* 📺 PRESTIGE EPG SÁV – NULLA FRAME-DROP, AZONNALI BEÚSZÁS */
+    function showUpcomingEpgGuide() {
         if (!canShowLowerThird() || isTrackCardOpen || isSideWidgetActive || isEpgActive) return;
         const todayKey = getSelectedDateKey(0);
         const schedule = weekSchedules[todayKey] || [];
@@ -2088,10 +2110,13 @@
         if (epgSpotlightArtist) epgSpotlightArtist.textContent = nextParsed.artist.toUpperCase();
         if (epgSpotlightTitle) epgSpotlightTitle.textContent = nextParsed.title || "CHERRY1 SELECTION";
 
-        const nextCover = await fetchCoverArtUrl(nextParsed.artist, nextParsed.title);
-        if (epgSpotlightImg) {
-            epgSpotlightImg.src = nextCover || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80";
-        }
+        // Alapértelmezett placeholder, hogy ne várjon a hálózatra
+        if (epgSpotlightImg) epgSpotlightImg.src = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80";
+
+        // Aszinkron borítólekérés a háttérben
+        fetchCoverArtUrl(nextParsed.artist, nextParsed.title).then(coverUrl => {
+            if (coverUrl && epgSpotlightImg) epgSpotlightImg.src = coverUrl;
+        });
 
         if (epgTimelineStream) {
             const laterItems = upcoming.slice(1, 3);
@@ -2117,11 +2142,12 @@
         }
 
         isEpgActive = true;
+        // Azonnali GPU-s beúszás layout újraszámolás nélkül
         tvEpgGuideBanner.classList.add('active');
 
         setTimeout(() => {
             tvEpgGuideBanner.classList.remove('active');
-            isEpgActive = false;
+            setTimeout(() => { isEpgActive = false; }, 450);
         }, 15000);
     }
 
@@ -2247,6 +2273,12 @@
             };
         }
 
+        // 🛡️ BIZTONSÁGI RETESZ: Ha a videó sosem küldene 'ended' eseményt, 137 mp múlva kötelezően újraindul az adás!
+        if (newsHardTimeout) clearTimeout(newsHardTimeout);
+        newsHardTimeout = setTimeout(() => {
+            if (isHourlyNewsRunning) endHourlyNewsBulletin();
+        }, 137000);
+
         hourlyNewsMagazine.classList.add('active');
 
         let activeStories = (rawNewsStories.length >= 7) ? rawNewsStories.slice(0, 7) : [
@@ -2308,6 +2340,7 @@
         showStory();
     }
 
+    /* ⛅ 4 OLDALAS IDŐJÁRÁS + GARANTÁLT ADÁS-ÚJRAINDÍTÁS */
     function launchFourTierWeather() {
         if (!isHourlyNewsRunning) return;
         magNewsBodyGrid.style.display = 'none';
@@ -2324,12 +2357,12 @@
         const renderWeatherPage = () => {
             if (!isHourlyNewsRunning) return;
 
+            // 🛑 A 4. OLDAL UTÁN KÖTELEZŐEN VISSZAÁLL AZ ADÁSRA!
             if (pageIdx >= pages.length) {
                 hourlyNewsMagazine.style.transition = 'opacity 0.8s ease';
                 hourlyNewsMagazine.style.opacity = '0';
                 setTimeout(() => {
-                    hourlyNewsMagazine.classList.remove('active');
-                    hourlyNewsMagazine.style.opacity = '1';
+                    endHourlyNewsBulletin();
                 }, 900);
                 return;
             }
@@ -2392,6 +2425,7 @@
     function endHourlyNewsBulletin() {
         if (!isHourlyNewsRunning) return;
         isHourlyNewsRunning = false;
+        if (newsHardTimeout) { clearTimeout(newsHardTimeout); newsHardTimeout = null; }
 
         if (newsBgVideo) { 
             newsBgVideo.pause(); 
@@ -2399,6 +2433,7 @@
             newsBgVideo.onended = null;
         }
         hourlyNewsMagazine.classList.remove('active');
+        hourlyNewsMagazine.style.opacity = '1';
         stationClockOverlay.classList.remove('active');
 
         if (brandBadgeAnchor && showBrandBadge) brandBadgeAnchor.classList.remove('hide-in-news');
@@ -2451,6 +2486,7 @@
 
     function resetTrackGraphicsState() {
         introTriggeredForTrack = false;
+        isNextCoverPreloaded = false;
         outroStep = 0;
         if (outroStepTimer) { clearTimeout(outroStepTimer); outroStepTimer = null; }
         hideCherryTrackCard();
@@ -2515,6 +2551,11 @@
         let foundIdx = schedule.findIndex(item => curSec >= item.startSec && curSec < item.endSec);
         if (foundIdx === -1) foundIdx = 0;
 
+        // Ha véletlenül a news tételre mutatna, lépjünk a következő dalra
+        if (schedule[foundIdx] && schedule[foundIdx].isNews) {
+            foundIdx = (foundIdx + 1) % schedule.length;
+        }
+
         hideColorBarScreen();
         const clip = schedule[foundIdx];
         const offset = Math.max(0, curSec - clip.startSec);
@@ -2539,7 +2580,12 @@
         if (sched.length === 0 || currentClipIndex === -1) return;
 
         const curClip = sched[currentClipIndex];
-        const nextClip = sched[(currentClipIndex + 1) % sched.length];
+        
+        let nextIdx = (currentClipIndex + 1) % sched.length;
+        while (sched[nextIdx] && sched[nextIdx].isNews && sched.length > 1) {
+            nextIdx = (nextIdx + 1) % sched.length;
+        }
+        const nextClip = sched[nextIdx];
 
         if (curClip) {
             const parsed = parseArtistAndTitle(curClip.title);
