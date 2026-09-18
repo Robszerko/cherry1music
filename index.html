@@ -177,7 +177,6 @@
     .tv-hourly-news-magazine {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         z-index: 99985;
-        /* Diszkrét észrevehetetlen alulról érkező fénysötétítés (scrim vignette), ami garantálja az olvashatóságot doboz nélkül is */
         background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.65) 100%);
         display: none; flex-direction: column; justify-content: space-between; padding: 3.0cqw 4.0cqw 2.6cqw 4.0cqw;
         user-select: none; opacity: 0; transition: opacity 0.4s ease;
@@ -294,55 +293,6 @@
     @keyframes pulseMoon { 0% { opacity: 0.85; } 100% { filter: drop-shadow(0 0 6px rgba(56,189,248,0.9)); } }
     @keyframes rainFall { 0% { transform: translateY(-3px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
 
-    /* 📺 PRESTIGE EPG SÁV */
-    .tv-epg-guide-banner {
-        position: absolute; bottom: 2.5cqw; left: 3.0cqw; right: 3.0cqw; z-index: 9997;
-        background: #080c1a;
-        border: 1.5px solid rgba(255, 17, 85, 0.55); border-left: 0.48cqw solid var(--theme-primary);
-        border-radius: 1.2cqw; padding: 0.9cqw 1.4cqw;
-        display: flex; flex-direction: column; gap: 0.7cqw;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.95);
-        opacity: 0; pointer-events: none; visibility: hidden;
-        transform: translate3d(0, 35px, 0); will-change: transform, opacity;
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.4s;
-    }
-    .tv-epg-guide-banner.active {
-        opacity: 1 !important; visibility: visible !important;
-        transform: translate3d(0, 0, 0) !important;
-    }
-
-    .epg-top-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 0.4cqw; }
-    .epg-header-tag {
-        background: var(--theme-primary); color: #fff; font-family: 'JetBrains Mono', monospace;
-        font-size: clamp(0.55rem, 0.75cqw, 0.85rem); font-weight: 900; padding: 2px 7px; border-radius: 4px;
-        text-transform: uppercase; letter-spacing: 0.6px;
-    }
-    .epg-split-layout { display: grid; grid-template-columns: 42% 56%; gap: 2%; align-items: stretch; }
-
-    .epg-spotlight-card {
-        display: flex; align-items: center; gap: 0.9cqw; background: rgba(255, 17, 85, 0.12);
-        border: 0.14cqw solid rgba(255, 17, 85, 0.35); border-radius: 0.8cqw; padding: 0.5cqw 0.9cqw;
-    }
-    .epg-spotlight-art-box {
-        width: 4.6cqw; height: 4.6cqw; min-width: 44px; min-height: 44px; border-radius: 0.6cqw;
-        overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0;
-    }
-    .epg-spotlight-art-img { width: 100%; height: 100%; object-fit: cover; }
-    .epg-spotlight-info { display: flex; flex-direction: column; gap: 0.15cqw; overflow: hidden; }
-    .epg-spotlight-badge { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.52rem, 0.7cqw, 0.8rem); font-weight: 900; color: #facc15; }
-    .epg-spotlight-artist { font-family: 'Outfit', sans-serif; font-size: clamp(0.92rem, 1.3cqw, 1.6rem); font-weight: 900; color: #ffffff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .epg-spotlight-title { font-size: clamp(0.70rem, 0.92cqw, 1.1rem); color: #38bdf8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .epg-timeline-stream { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8cqw; }
-    .epg-timeline-item {
-        display: flex; flex-direction: column; justify-content: center; gap: 0.2cqw;
-        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-        border-left: 0.3cqw solid var(--accent-cyan); padding: 0.5cqw 0.8cqw; border-radius: 0.6cqw;
-    }
-    .epg-tl-time { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.55rem, 0.72cqw, 0.82rem); color: var(--accent-amber); font-weight: 900; }
-    .epg-tl-artist { font-size: clamp(0.72rem, 0.95cqw, 1.1rem); color: #fff; font-weight: 800; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .epg-tl-title { font-size: clamp(0.62rem, 0.80cqw, 0.92rem); color: #cbd5e1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
     /* 🌍 BAL SZÉLRŐL BEÚSZÓ HÍR WIDGET */
     .tv-side-news-widget {
         position: absolute; top: 50%; left: 0; transform: translate3d(-105%, -50%, 0);
@@ -381,7 +331,7 @@
         transform: translate3d(0, 0, 0);
     }
 
-    /* 🍒 1. CSATORNALOGÓ + ÚJ KIS KAPCSOLÓDÓ NEON ÓRA BADGE */
+    /* 🍒 1. CSATORNALOGÓ + KIEMELT NEON KAPSZULA ÓRA */
     .tv-watermark-anchor {
         position: absolute; top: var(--logo-top-val, 2.5cqw); right: var(--logo-side-val, 2.8cqw);
         display: flex; align-items: center; pointer-events: auto; cursor: pointer; z-index: 200000;
@@ -524,7 +474,7 @@
         filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
     }
 
-    /* 🎚️ 2. PONT: ÉLŐ ANIMÁLT EQUALIZER SÁVOK A BORÍTÓ SARKÁBAN */
+    /* 🎚️ ÉLŐ ANIMÁLT EQUALIZER SÁVOK A BORÍTÓ SARKÁBAN */
     .c1-art-eq-badge {
         position: absolute; bottom: 6px; right: 6px; z-index: 4;
         display: flex; align-items: flex-end; gap: 2.5px;
@@ -717,7 +667,7 @@
         </div>
 
         <video id="tv-video-player" class="tv-video-deck aspect-mode-contain" playsinline preload="auto" crossorigin="anonymous"></video>
-        <!-- 🎬 3. PONT: OPTIKAI BROADCAST FLASH RÉTEG -->
+        <!-- 🎬 OPTIKAI BROADCAST FLASH RÉTEG -->
         <div class="tv-broadcast-flash" id="tv-broadcast-flash"></div>
         <video id="tv-news-bg-video" class="tv-news-bg-video" playsinline preload="auto" crossorigin="anonymous"></video>
 
@@ -780,30 +730,6 @@
 
             <div class="mag-weather-dashboard" id="mag-weather-dashboard">
                 <div class="weather-grid-cards" id="weather-rich-cards-container"></div>
-            </div>
-        </div>
-
-        <!-- 📺 PRESTIGE EPG SÁV -->
-        <div class="tv-epg-guide-banner" id="tv-epg-guide-banner">
-            <div class="epg-top-bar">
-                <div class="epg-header-tag">ÉLŐBEN KÖVETKEZIK</div>
-                <span style="font-size:0.85rem; font-weight:800; color:#fff;" id="epg-show-headline">CHERRY1 MUSIC</span>
-                <span style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:0.85rem; color:#fff;" id="epg-current-clock">--:--:--</span>
-            </div>
-            
-            <div class="epg-split-layout">
-                <div class="epg-spotlight-card">
-                    <div class="epg-spotlight-art-box">
-                        <img id="epg-spotlight-img" class="epg-spotlight-art-img" src="" alt="Cover" decoding="async">
-                    </div>
-                    <div class="epg-spotlight-info">
-                        <span class="epg-spotlight-badge" id="epg-spotlight-time">▶ KÖVETKEZIK 14:25</span>
-                        <div class="epg-spotlight-artist" id="epg-spotlight-artist">BALÁZS PALI</div>
-                        <div class="epg-spotlight-title" id="epg-spotlight-title">Homok Szerelem</div>
-                    </div>
-                </div>
-
-                <div class="epg-timeline-stream" id="epg-timeline-stream"></div>
             </div>
         </div>
 
@@ -890,7 +816,7 @@
                                 <text x="35" y="85" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="rgba(255,255,255,0.88)" text-anchor="middle">1</text>
                             </svg>
                         </div>
-                        <!-- 🎚️ 2. PONT: ÉLŐ ANIMÁLT EQUALIZER -->
+                        <!-- 🎚️ ÉLŐ ANIMÁLT EQUALIZER -->
                         <div class="c1-art-eq-badge">
                             <span class="c1-eq-bar"></span>
                             <span class="c1-eq-bar"></span>
@@ -1100,7 +1026,6 @@
             <div class="hud-box">
                 <span class="hud-box-title">⚡ GRAFIKAI TESZTEK AZ ÉLŐ KÉPEN</span>
                 <button class="hud-btn" onclick="triggerTrackCardTest()">🎴 Dalkártya Teszt (EQ + 3D Kitekintő)</button>
-                <button class="hud-btn" onclick="triggerEpgTest()">📺 Élőben Következik EPG Teszt</button>
                 <button class="hud-btn" onclick="triggerSideNewsWidgetTest()">📰 Bal Oldali Hírek Teszt (3 Hír)</button>
                 <button class="hud-btn" onclick="triggerHourlyNewsTest(false)">📰 Hírek röviden Teszt (Réteg nélküli betűk)</button>
             </div>
@@ -1129,7 +1054,7 @@
     const WORKER_URL = "https://kepbenoszlop.androjid21.workers.dev";
     const BACKUP_DEMO_STREAM = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     const MASTER_PIN = "1982";
-    const STORAGE_KEY_COVERS = "cherry1_cover_art_cache_v4";
+    const STORAGE_KEY_COVERS = "cherry1_cover_art_cache_v5";
     const WEATHER_COM_API_KEY = "53b89abc03d14d7ab89abc03d1dd7ab6";
 
     let serverTimeOffsetMs = 0;
@@ -1175,7 +1100,6 @@
     let sideNewsTimer = null;
     let lastSideNewsTriggerMinute = -1;
 
-    let isEpgActive = false;
     let controlsHideTimer = null;
 
     let secretClickCount = 0;
@@ -1289,7 +1213,6 @@
         ]
     };
 
-    /* 🛡️ HÍRKÉPEK PRIORITÁSI SORRENDJE: 1. EREDETI HÍR META KÉP, 2. TÉMA POOL */
     function getNewsStoryImage(item, idx) {
         if (item && item.image && item.image.startsWith("http")) return item.image;
         const text = ((item?.title || "") + " " + (item?.description || "")).toLowerCase();
@@ -1351,14 +1274,6 @@
     const magStoryProgressFill = document.getElementById('mag-story-progress-fill');
     const magWeatherDashboard = document.getElementById('mag-weather-dashboard');
     const weatherRichCardsContainer = document.getElementById('weather-rich-cards-container');
-
-    const tvEpgGuideBanner = document.getElementById('tv-epg-guide-banner');
-    const epgCurrentClock = document.getElementById('epg-current-clock');
-    const epgSpotlightImg = document.getElementById('epg-spotlight-img');
-    const epgSpotlightTime = document.getElementById('epg-spotlight-time');
-    const epgSpotlightArtist = document.getElementById('epg-spotlight-artist');
-    const epgSpotlightTitle = document.getElementById('epg-spotlight-title');
-    const epgTimelineStream = document.getElementById('epg-timeline-stream');
 
     const tvSideNewsWidget = document.getElementById('tv-side-news-widget');
     const snwSourceLbl = document.getElementById('snw-source-lbl');
@@ -2070,7 +1985,7 @@
             }, 6800);
         }
 
-        /* 🎬 4. PONT: OUTRO INDÍTÁSA KITEKINTŐVEL AZ UTOLSÓ 20 MÁSODPERCBEN */
+        /* 🎬 OUTRO INDÍTÁSA KITEKINTŐVEL AZ UTOLSÓ 20 MÁSODPERCBEN */
         if (curTime >= 15.0 && remaining <= 20.0 && remaining > 2.5 && outroStep === 0) {
             startOutroTrackSequence(schedule, curClip, playbackSessionId);
         }
@@ -2098,7 +2013,7 @@
         advanceToNextScheduledClip();
     };
 
-    /* 🎬 4. PONT: OUTRO 3D FLIP KITEKINTŐ A KÖVETKEZŐ DALRA */
+    /* 🎬 OUTRO 3D FLIP KITEKINTŐ A KÖVETKEZŐ DALRA */
     function startOutroTrackSequence(schedule, curClip, sessionId) {
         if (sessionId !== playbackSessionId) return;
         outroStep = 1;
@@ -2116,7 +2031,6 @@
             if (sessionId !== playbackSessionId) return;
             outroStep = 2;
 
-            // 3D Kitekintő Flip befordítás a következő borítóra
             if (c1CardArtBox) c1CardArtBox.classList.add('flip-rotate');
             setTimeout(() => {
                 if (nextClip) setCherryTrackCard("⏭ KÖVETKEZIK", nextClip.title, true);
@@ -2135,7 +2049,7 @@
         executeClipTransition();
     }
 
-    /* 🎬 3. PONT: OPTIKAI BROADCAST FLASH VÁGÁS A KLIPEK KÖZÖTT */
+    /* 🎬 OPTIKAI BROADCAST FLASH VÁGÁS A KLIPEK KÖZÖTT */
     function executeClipTransition(customTargetIndex = -1) {
         const todayKey = getSelectedDateKey(0);
         const schedule = weekSchedules[todayKey] || [];
@@ -2165,7 +2079,6 @@
         hideColorBarScreen();
         updateViewerUnderBarInfo();
 
-        // Finom optikai stúdió vágás-villanás
         if (broadcastFlash) broadcastFlash.classList.add('flashing');
         player.classList.add('fading');
 
@@ -2261,7 +2174,6 @@
     function showCherryTrackCard() {
         if (!canShowLowerThird()) return;
         endSideNewsWidget();
-        if (tvEpgGuideBanner) tvEpgGuideBanner.classList.remove('active');
 
         isTrackCardOpen = true;
         cherryTrackCard.classList.add('card-active');
@@ -2297,72 +2209,8 @@
         startHourlyNewsBulletin(true, isMidnight);
     }
 
-    function triggerEpgTest() {
-        hideCherryTrackCard();
-        endSideNewsWidget();
-        showUpcomingEpgGuide();
-    }
-
-    function showUpcomingEpgGuide() {
-        if (!canShowLowerThird() || isTrackCardOpen || isSideWidgetActive || isEpgActive) return;
-        const todayKey = getSelectedDateKey(0);
-        const schedule = weekSchedules[todayKey] || [];
-        if (schedule.length === 0 || currentClipIndex === -1) return;
-
-        const now = getBudapestNow();
-        const curSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-        const upcoming = schedule.filter(it => it.startSec > curSec && !it.isNews).slice(0, 3);
-        if (upcoming.length === 0) return;
-
-        if (epgCurrentClock) epgCurrentClock.textContent = now.toLocaleTimeString('hu-HU');
-
-        const nextUp = upcoming[0];
-        const nextParsed = parseArtistAndTitle(nextUp.title);
-
-        if (epgSpotlightTime) epgSpotlightTime.textContent = `▶ KÖVETKEZIK ${nextUp.startTimeStr}`;
-        if (epgSpotlightArtist) epgSpotlightArtist.textContent = nextParsed.artist.toUpperCase();
-        if (epgSpotlightTitle) epgSpotlightTitle.textContent = nextParsed.title || "CHERRY1 SELECTION";
-
-        if (epgSpotlightImg) epgSpotlightImg.src = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80";
-
-        fetchCoverArtUrl(nextParsed.artist, nextParsed.title).then(coverUrl => {
-            if (coverUrl && epgSpotlightImg) epgSpotlightImg.src = coverUrl;
-        });
-
-        if (epgTimelineStream) {
-            const laterItems = upcoming.slice(1, 3);
-            if (laterItems.length > 0) {
-                epgTimelineStream.innerHTML = laterItems.map(item => {
-                    const parsed = parseArtistAndTitle(item.title);
-                    return `
-                        <div class="epg-timeline-item">
-                            <span class="epg-tl-time">⏱️ ${escapeHtml(item.startTimeStr)}</span>
-                            <span class="epg-tl-artist">${escapeHtml(parsed.artist)}</span>
-                            <span class="epg-tl-title">${escapeHtml(parsed.title || '')}</span>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                epgTimelineStream.innerHTML = `
-                    <div class="epg-timeline-item" style="grid-column: span 2; text-align:center;">
-                        <span class="epg-tl-artist">CHERRY1 NON-STOP MUSIC</span>
-                        <span class="epg-tl-title">A legjobb slágerek megszakítás nélkül</span>
-                    </div>
-                `;
-            }
-        }
-
-        isEpgActive = true;
-        tvEpgGuideBanner.classList.add('active');
-
-        setTimeout(() => {
-            tvEpgGuideBanner.classList.remove('active');
-            setTimeout(() => { isEpgActive = false; }, 450);
-        }, 15000);
-    }
-
     function startSideNewsWidgetBlock() {
-        if (!canShowLowerThird() || isTrackCardOpen || isEpgActive || isSideWidgetActive) return;
+        if (!canShowLowerThird() || isTrackCardOpen || isSideWidgetActive) return;
         if (!rawNewsStories || rawNewsStories.length === 0) return;
 
         isSideWidgetActive = true;
@@ -2427,7 +2275,6 @@
         isHourlyNewsRunning = true;
         hideCherryTrackCard();
         endSideNewsWidget();
-        if (tvEpgGuideBanner) tvEpgGuideBanner.classList.remove('active');
 
         if (brandBadgeAnchor) brandBadgeAnchor.classList.add('hide-in-news');
 
@@ -2760,10 +2607,6 @@
         if (isTvBroadcasting && !isHourlyNewsRunning && m === 59 && s === randomClockTriggerSec) {
             const isTargetHour = (now.getHours() === 23 ? enableMidnightNews : (isNewsWindow && enableDaytimeNews));
             if (isTargetHour) startHourlyNewsBulletin(false, (now.getHours() === 23));
-        }
-
-        if (isTvBroadcasting && !isHourlyNewsRunning && (m === 15 || m === 45) && s === 0) {
-            showUpcomingEpgGuide();
         }
 
         const sideNewsMinutes = [8, 22, 38, 52];
