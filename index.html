@@ -224,7 +224,9 @@
     }
 
     /* ⛅ GOOGLE WEATHER 3-SZINTŰ DASHBOARD (TELJES, MINT A STÚDIÓBAN) */
-    .mag-weather-dashboard { display: none; flex-direction: column; gap: 1.2cqw; width: 100%; flex: 1; justify-content: center; padding: 1cqw 0; }
+    .mag-weather-dashboard { display: none; flex-direction: column; gap: 1.2cqw; width: 100%; flex: 1; justify-content: center; padding: 1cqw 0; opacity: 1; }
+    @keyframes weatherFinalFade { from { opacity: 1; transform: translate3d(0,0,0); } to { opacity: 0; transform: translate3d(0,-10px,0); } }
+    .mag-weather-dashboard.final-fade-out { animation: weatherFinalFade 4.8s linear forwards !important; pointer-events: none; }
     .mag-weather-dashboard.comb-in { animation: newsCardCombIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .mag-weather-dashboard.comb-out { animation: newsCardCombOut 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
     .weather-dash-top { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.28); padding-bottom: 0.5cqw; }
@@ -674,6 +676,7 @@
     const WORKER_URL = "https://kepbenoszlop.androjid21.workers.dev";
     const BACKUP_STREAM = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     const GOOGLE_WEATHER_ENDPOINT = `${WORKER_URL}/api/tv/google-weather`;
+    const VIEWER_WEATHER_CACHE_KEY = 'cherry1_viewer_weather_cache_v1';
     const BUDAPEST_FORMATTER = new Intl.DateTimeFormat('en-GB', {
         timeZone: 'Europe/Budapest', year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
@@ -711,6 +714,12 @@
     let cachedWeatherData = [];
     let cachedWorldWeatherData = [];
     let cachedExtremeWeatherData = [];
+    let viewerWeatherFetchPromise = null;
+    let viewerWeatherLastFetchAt = 0;
+    let activeWeatherTier = 0;
+    let renderActiveWeatherPage = null;
+    let weatherFinalFadeStarted = false;
+    let newsBlockUsesCustomClip = false;
 
     let isHourlyNewsRunning = false;
     let isStationClockVisible = false;
@@ -1353,6 +1362,11 @@
     function startHourlyNewsBulletin(isMidnight = false, startImmediately = false) {
         if (isHourlyNewsRunning) return;
         isHourlyNewsRunning = true;
+        activeWeatherTier = 0;
+        renderActiveWeatherPage = null;
+        weatherFinalFadeStarted = false;
+        // A visszaszámlálás alatt aszinkron frissítünk; a lejátszást soha nem várakoztatjuk meg.
+        refreshViewerWeatherData(true).catch(() => {});
         isMidnightEdition = isMidnight;
         hideCherryTrackCard();
         endBottomNewsCrawler();
@@ -1380,169 +1394,222 @@
         }, waitMs);
     }
 
+    function fadeFinalWeatherCard() {
+        if (!isHourlyNewsRunning || weatherFinalFadeStarted || !magWeatherDashboard) return;
+        if (activeWeatherTier !== 3 && typeof renderActiveWeatherPage === 'function') {
+            renderActiveWeatherPage(3);
+        }
+        weatherFinalFadeStarted = true;
+        magWeatherDashboard.classList.remove('comb-in', 'comb-out', 'final-fade-out');
+        magWeatherDashboard.classList.add('final-fade-out');
+    }
+
+    function monitorNewsVideoTime() {
+        if (!isHourlyNewsRunning || !newsBgVideo || newsBgVideo.loop) return;
+        const duration = Number(newsBgVideo.duration);
+        const current = Number(newsBgVideo.currentTime);
+        if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(current)) return;
+        if (duration - current <= 5.05) fadeFinalWeatherCard();
+    }
+
     function launchNewsMagazine() {
         if (!hourlyNewsMagazine) return;
-        const targetSrc = isMidnightEdition ? (customMidnightBgVideoUrl || customNewsBgVideoUrl || BACKUP_STREAM) : (customNewsBgVideoUrl || BACKUP_STREAM);
-        const targetNewsDurationSec = isMidnightEdition && enableMidnightNews ? 600 : 137;
+        const customTargetSrc = isMidnightEdition
+            ? (customMidnightBgVideoUrl || customNewsBgVideoUrl)
+            : customNewsBgVideoUrl;
+        const targetSrc = customTargetSrc || BACKUP_STREAM;
+        const defaultDurationSec = isMidnightEdition && enableMidnightNews ? 600 : 137;
+        const isFiniteCustomClip = Boolean(customTargetSrc);
+        newsBlockUsesCustomClip = isFiniteCustomClip;
+        weatherFinalFadeStarted = false;
+        activeWeatherTier = 0;
+        renderActiveWeatherPage = null;
+        let contentStarted = false;
+        let fallbackStartTimer = null;
+
+        hourlyNewsMagazine.classList.add('active');
+        if (magMainTitleTxt) magMainTitleTxt.textContent = isMidnightEdition ? "Éjféli hírek" : "Hírek röviden";
+        if (magHeadlineTxt) magHeadlineTxt.textContent = 'Hírek és időjárás előkészítése…';
+        if (magDescTxt) magDescTxt.textContent = 'A friss adatok betöltése folyamatban.';
+        if (magNewsBodyGrid) { magNewsBodyGrid.style.display = 'grid'; magNewsBodyGrid.classList.remove('final-fade-out','comb-out'); }
+        if (magWeatherDashboard) { magWeatherDashboard.style.display = 'none'; magWeatherDashboard.classList.remove('final-fade-out','comb-out'); }
+
+        const beginContent = (reportedDurationSec) => {
+            if (contentStarted || !isHourlyNewsRunning) return;
+            contentStarted = true;
+            if (fallbackStartTimer) { clearTimeout(fallbackStartTimer); fallbackStartTimer = null; }
+            const totalDurationSec = isFiniteCustomClip && Number.isFinite(reportedDurationSec) && reportedDurationSec > 30
+                ? Math.floor(reportedDurationSec)
+                : defaultDurationSec;
+            const activeStories = rawNewsStories.slice(0, 5).length ? rawNewsStories.slice(0, 5) : [{
+                title: 'Hírek és aktualitások frissítése folyamatban...',
+                description: 'A legfrissebb információk hamarosan megjelennek a képernyőn.',
+                source: 'CHERRY1', image: ''
+            }];
+
+            const weatherDurationSec = Math.min(45, Math.max(18, Math.round(totalDurationSec * 0.33)));
+            const storyDurationSec = Math.max(1, totalDurationSec - weatherDurationSec);
+            const perStoryMs = Math.max(1000, Math.round((storyDurationSec / activeStories.length) * 1000));
+            let sIdx = -1;
+
+            const nextStory = () => {
+                if (!isHourlyNewsRunning) return;
+                sIdx++;
+                if (sIdx >= activeStories.length) {
+                    launchThreeTierWeather(weatherDurationSec, totalDurationSec);
+                    return;
+                }
+
+                const item = activeStories[sIdx];
+                const originalImageUrl = safeNewsImageUrl(item.image || item.thumbnail || '');
+                const imgUrl = originalImageUrl ? `${WORKER_URL}/api/tv/news-image?url=${encodeURIComponent(originalImageUrl)}` : '';
+                let triedDirectImageFallback = false;
+                if (magNewsBodyGrid) magNewsBodyGrid.classList.toggle('no-image', !imgUrl);
+                if (magImageWrap) magImageWrap.style.display = imgUrl ? 'block' : 'none';
+                if (magStoryImgFg) {
+                    magStoryImgFg.onload = () => {
+                        if (magImageWrap) magImageWrap.style.display = 'block';
+                        if (magNewsBodyGrid) magNewsBodyGrid.classList.remove('no-image');
+                    };
+                    magStoryImgFg.onerror = () => {
+                        if (originalImageUrl && !triedDirectImageFallback && magStoryImgFg.src !== originalImageUrl) {
+                            triedDirectImageFallback = true;
+                            magStoryImgFg.src = originalImageUrl;
+                            return;
+                        }
+                        if (magImageWrap) magImageWrap.style.display = 'none';
+                        if (magNewsBodyGrid) magNewsBodyGrid.classList.add('no-image');
+                        magStoryImgFg.removeAttribute('src');
+                    };
+                    if (imgUrl) {
+                        magStoryImgFg.loading = 'eager';
+                        magStoryImgFg.decoding = 'async';
+                        magStoryImgFg.referrerPolicy = 'no-referrer';
+                        magStoryImgFg.src = imgUrl;
+                    } else {
+                        magStoryImgFg.removeAttribute('src');
+                        if (magImageWrap) magImageWrap.style.display = 'none';
+                    }
+                }
+                if (magSourceTag) magSourceTag.textContent = (item.source || 'INDEX').toUpperCase();
+                if (magCatLbl) magCatLbl.textContent = `🔴 ${item.source || 'KÖZÉLET'}`;
+                if (magTimeLbl) magTimeLbl.textContent = formatNewsExactTime(item.date);
+                if (magHeadlineTxt) magHeadlineTxt.textContent = item.title;
+                if (magDescTxt) magDescTxt.textContent = item.description || item.title;
+                if (magNewsBodyGrid) {
+                    magNewsBodyGrid.classList.remove('comb-out');
+                    magNewsBodyGrid.classList.add('comb-in');
+                }
+                setTimeout(() => {
+                    if (magNewsBodyGrid && isHourlyNewsRunning) {
+                        magNewsBodyGrid.classList.remove('comb-in');
+                        magNewsBodyGrid.classList.add('comb-out');
+                    }
+                }, Math.max(250, perStoryMs - 800));
+                setTimeout(nextStory, perStoryMs);
+            };
+            nextStory();
+        };
 
         if (newsBgVideo) {
+            newsBgVideo.onended = null;
+            newsBgVideo.onerror = null;
+            newsBgVideo.onloadedmetadata = null;
+            newsBgVideo.ontimeupdate = null;
+            newsBgVideo.ontimeupdate = monitorNewsVideoTime;
+            newsBgVideo.preload = 'auto';
             newsBgVideo.src = targetSrc;
-            newsBgVideo.currentTime = 0;
+            try { newsBgVideo.currentTime = 0; } catch (e) {}
             ensureDeckAudio(newsBgVideo, masterVolume);
-            newsBgVideo.loop = true;
+            newsBgVideo.loop = !isFiniteCustomClip;
             newsBgVideo.classList.add('active');
-            newsBgVideo.play().catch(()=>{});
-        }
-        hourlyNewsMagazine.classList.add('active');
-        if (magNewsBodyGrid) magNewsBodyGrid.style.display = 'grid';
-        if (magWeatherDashboard) magWeatherDashboard.style.display = 'none';
-
-        let stories = rawNewsStories.slice(0, 5);
-        if (stories.length === 0) {
-            stories = [{
-                title: "Hírek és aktualitások frissítése folyamatban...",
-                description: "A legfrissebb információk hamarosan megjelennek a képernyőn.",
-                source: "CHERRY1",
-                image: ""
-            }];
+            if (isFiniteCustomClip) {
+                newsBgVideo.onloadedmetadata = () => beginContent(Number(newsBgVideo.duration));
+                newsBgVideo.onended = () => { if (isHourlyNewsRunning) endHourlyNewsBulletin(); };
+                // Hibás/eltűnt hírvideó ne fagyassza meg a csatornát: ugorjunk a következő klipre.
+                newsBgVideo.onerror = () => { if (isHourlyNewsRunning) endHourlyNewsBulletin(); };
+            }
+            newsBgVideo.play().catch(() => {});
+            if (isFiniteCustomClip && newsBgVideo.readyState >= 1) beginContent(Number(newsBgVideo.duration));
         }
 
-        const availableSec = Math.max(60, targetNewsDurationSec);
-        const weatherDurationSec = Math.min(45, Math.round(availableSec * 0.33));
-        const newsDurationSec = availableSec - weatherDurationSec;
-        const perStoryMs = Math.round((newsDurationSec / stories.length) * 1000);
-
-        let sIdx = -1;
-        const nextStory = () => {
-            if (!isHourlyNewsRunning) return;
-            sIdx++;
-            if (sIdx >= stories.length) {
-                launchThreeTierWeather(weatherDurationSec);
-                return;
-            }
-            const it = stories[sIdx];
-            if (magSourceTag) magSourceTag.textContent = (it.source || "INDEX").toUpperCase();
-            if (magHeadlineTxt) magHeadlineTxt.textContent = it.title;
-            if (magDescTxt) magDescTxt.textContent = it.description || it.title;
-
-            // Képmegjelenítés ellenőrzése és közvetlen fallback
-            const imgUrl = it.image ? `${WORKER_URL}/api/tv/news-image?url=${encodeURIComponent(it.image)}` : '';
-            if (magStoryImgFg) {
-                let triedDirect = false;
-                magStoryImgFg.onload = () => {
-                    if (magNewsBodyGrid) magNewsBodyGrid.classList.remove('no-image');
-                };
-                magStoryImgFg.onerror = () => {
-                    if (it.image && !triedDirect) {
-                        triedDirect = true;
-                        magStoryImgFg.src = it.image;
-                        return;
-                    }
-                    if (magNewsBodyGrid) magNewsBodyGrid.classList.add('no-image');
-                    magStoryImgFg.removeAttribute('src');
-                };
-                if (imgUrl) {
-                    magStoryImgFg.src = imgUrl;
-                    if (magNewsBodyGrid) magNewsBodyGrid.classList.remove('no-image');
-                } else {
-                    magStoryImgFg.removeAttribute('src');
-                    if (magNewsBodyGrid) magNewsBodyGrid.classList.add('no-image');
-                }
-            }
-
-            magNewsBodyGrid.classList.remove('comb-out');
-            magNewsBodyGrid.classList.add('comb-in');
-
-            setTimeout(() => {
-                if (magNewsBodyGrid && isHourlyNewsRunning) {
-                    magNewsBodyGrid.classList.remove('comb-in');
-                    magNewsBodyGrid.classList.add('comb-out');
-                }
-            }, perStoryMs - 700);
-
-            setTimeout(nextStory, perStoryMs);
-        };
-        nextStory();
+        if (!isFiniteCustomClip || !newsBgVideo) beginContent(defaultDurationSec);
+        else fallbackStartTimer = setTimeout(() => beginContent(defaultDurationSec), 3500);
     }
 
     /* ⛅ HÁROMOLDALAS IDŐJÁRÁS (MAGYARORSZÁG + VILÁGVÁROSOK + EXTRÉM PONTOK) */
-    function launchThreeTierWeather(totalSec) {
+    function launchThreeTierWeather(totalSec, totalBlockDurationSec = totalSec) {
         if (!isHourlyNewsRunning || !magWeatherDashboard) return;
+        weatherFinalFadeStarted = false;
         if (magNewsBodyGrid) magNewsBodyGrid.style.display = 'none';
-
+        magWeatherDashboard.classList.remove('final-fade-out','comb-out');
         const singlePageMs = Math.floor((totalSec / 3) * 1000);
 
         const renderPage = (tier) => {
             if (!isHourlyNewsRunning || !magWeatherDashboard || !weatherRichCardsContainer) return;
+            activeWeatherTier = tier;
             magWeatherDashboard.style.display = 'flex';
             weatherRichCardsContainer.innerHTML = '';
-
-            let titleTxt = "⛅ GOOGLE WEATHER · MAGYARORSZÁG";
+            let titleTxt = '⛅ GOOGLE WEATHER · MAGYARORSZÁG';
             let list = cachedWeatherData;
-
-            if (tier === 2) {
-                titleTxt = "⛅ GOOGLE WEATHER · VILÁGVÁROSOK";
-                list = cachedWorldWeatherData;
-            } else if (tier === 3) {
-                titleTxt = "🌋 GOOGLE WEATHER · EXTRÉM PONTOK";
-                list = cachedExtremeWeatherData;
-            }
-
+            if (tier === 2) { titleTxt = '⛅ GOOGLE WEATHER · VILÁGVÁROSOK'; list = cachedWorldWeatherData; }
+            else if (tier === 3) { titleTxt = '🌋 GOOGLE WEATHER · EXTRÉM PONTOK'; list = cachedExtremeWeatherData; }
             if (weatherDashTitleTxt) weatherDashTitleTxt.textContent = titleTxt;
 
             if (!list || list.length === 0) {
-                weatherRichCardsContainer.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:18px; color:#cbd5e1; font-weight:700;">Google Weather adatok betöltése...</div>';
+                weatherRichCardsContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:18px;color:#cbd5e1;font-weight:700;">Az időjárási adatok pillanatnyilag nem érhetők el; a következő frissítésnél újrapróbáljuk.</div>';
             } else {
                 const val = v => (v === null || v === undefined || v === '') ? '—' : v;
                 weatherRichCardsContainer.innerHTML = list.slice(0, 8).map(c => `
                     <div class="weather-card-rich">
                         <div class="wcr-city">${escapeHtml(String(c.name || '').toUpperCase())}</div>
-                        <div class="wcr-main-row">
-                            <div class="wcr-icon-desc">
-                                ${c.iconUrl ? `<img class="wcr-icon-img" src="${escapeHtml(c.iconUrl)}" alt="">` : `<span>${c.icon || '☀️'}</span>`}
-                                <span>${escapeHtml(c.desc || 'Időjárás')}</span>
-                            </div>
-                            <div class="wcr-temp">${c.temp !== null ? (c.temp > 0 ? '+' : '') + c.temp + '°C' : '—'}</div>
-                        </div>
+                        <div class="wcr-main-row"><div class="wcr-icon-desc">${c.iconUrl ? `<img class="wcr-icon-img" src="${escapeHtml(c.iconUrl)}" alt="" loading="eager" decoding="async">` : `<span>${escapeHtml(c.icon || '☀️')}</span>`}<span>${escapeHtml(c.desc || 'Időjárás')}</span></div><div class="wcr-temp">${c.temp !== null && c.temp !== undefined ? (Number(c.temp) > 0 ? '+' : '') + c.temp + '°C' : '—'}</div></div>
                         <div class="wcr-feels">Hőérzet <strong>${val(c.feelsLike)}${c.feelsLike != null ? '°C' : ''}</strong></div>
                         <div class="wcr-details-grid">
-                            <span>Felhőzet <strong>${val(c.cloudCover)}${c.cloudCover != null ? '%' : ''}</strong></span>
-                            <span>Pára <strong>${val(c.humidity)}${c.humidity != null ? '%' : ''}</strong></span>
-                            <span>Szél <strong>${val(c.wind)}${c.wind != null ? ' km/h' : ''}</strong></span>
-                            <span>Nyomás <strong>${val(c.pressure)}${c.pressure != null ? ' hPa' : ''}</strong></span>
-                            <span>Csapadék <strong>${val(c.precipitation)}${c.precipitation != null ? '%' : ''}</strong></span>
-                            <span>UV-index <strong>${val(c.uvIndex)}</strong></span>
+                            <span>Felhőzet <strong>${val(c.cloudCover)}${c.cloudCover != null ? '%' : ''}</strong></span><span>Pára <strong>${val(c.humidity)}${c.humidity != null ? '%' : ''}</strong></span>
+                            <span>Szél <strong>${val(c.wind)}${c.wind != null ? ' km/h' : ''}</strong></span><span>Nyomás <strong>${val(c.pressure)}${c.pressure != null ? ' hPa' : ''}</strong></span>
+                            <span>Csapadék <strong>${val(c.precipitation)}${c.precipitation != null ? '%' : ''}</strong></span><span>UV-index <strong>${val(c.uvIndex)}</strong></span>
                         </div>
-                    </div>
-                `).join('');
+                    </div>`).join('');
             }
-
-            magWeatherDashboard.classList.remove('comb-out');
+            magWeatherDashboard.classList.remove('comb-out','final-fade-out');
             magWeatherDashboard.classList.add('comb-in');
         };
-
+        renderActiveWeatherPage = renderPage;
         renderPage(1);
-
         setTimeout(() => {
             if (!isHourlyNewsRunning) return;
             magWeatherDashboard.classList.remove('comb-in'); magWeatherDashboard.classList.add('comb-out');
-            setTimeout(() => { if (isHourlyNewsRunning) renderPage(2); }, 600);
-        }, singlePageMs - 600);
-
+            setTimeout(() => { if (isHourlyNewsRunning) renderPage(2); }, 500);
+        }, Math.max(0, singlePageMs - 500));
         setTimeout(() => {
             if (!isHourlyNewsRunning) return;
             magWeatherDashboard.classList.remove('comb-in'); magWeatherDashboard.classList.add('comb-out');
-            setTimeout(() => { if (isHourlyNewsRunning) renderPage(3); }, 600);
-        }, (singlePageMs * 2) - 600);
+            setTimeout(() => { if (isHourlyNewsRunning) renderPage(3); }, 500);
+        }, Math.max(0, singlePageMs * 2 - 500));
 
-        setTimeout(endHourlyNewsBulletin, totalSec * 1000);
+        // A véges saját hírvideót a tényleges lejátszási pozíció vezérli, nem a falióra.
+        // Ha megáll a pufferelés, a zárókártya és a klip nem fut ki idő előtt.
+        const hasMeasuredFiniteClip = Boolean(newsBgVideo && newsBlockUsesCustomClip &&
+            Number.isFinite(newsBgVideo.duration) && newsBgVideo.duration > 0);
+        if (!hasMeasuredFiniteClip) {
+            // Tartalék időzítés a demó/loopolt vagy nem mérhető forrásokhoz.
+            setTimeout(() => fadeFinalWeatherCard(), Math.max(0, totalSec * 1000 - 5000));
+            if (!newsBlockUsesCustomClip) {
+                setTimeout(() => endHourlyNewsBulletin(), totalSec * 1000);
+            }
+        }
     }
 
-    /* 🎬 HÍREK UTÁNI PONTOS ZENEINDÍTÁS AZONNALI HANGGAL ÉS DALINFÓVAL */
     function endHourlyNewsBulletin() {
         if (!isHourlyNewsRunning) return;
         if (newsLaunchTimer) { clearTimeout(newsLaunchTimer); newsLaunchTimer = null; }
         isHourlyNewsRunning = false;
+        activeWeatherTier = 0;
+        renderActiveWeatherPage = null;
+        weatherFinalFadeStarted = false;
+        if (newsBgVideo) { newsBgVideo.onended = null; newsBgVideo.onerror = null; newsBgVideo.onloadedmetadata = null; newsBgVideo.ontimeupdate = null; }
+        if (magWeatherDashboard) magWeatherDashboard.classList.remove('final-fade-out');
 
         playClipAfterNews();
 
@@ -2018,6 +2085,17 @@
         } catch(e) {}
     }
 
+    function loadViewerWeatherCache() {
+        try {
+            const cached = JSON.parse(localStorage.getItem(VIEWER_WEATHER_CACHE_KEY) || 'null');
+            if (!cached || typeof cached !== 'object') return;
+            if (Array.isArray(cached.hu)) cachedWeatherData = cached.hu;
+            if (Array.isArray(cached.world)) cachedWorldWeatherData = cached.world;
+            if (Array.isArray(cached.extreme)) cachedExtremeWeatherData = cached.extreme;
+            viewerWeatherLastFetchAt = Number(cached.timestamp) || 0;
+        } catch (_) {}
+    }
+
     /* 📰 HÍREK ÉS KÉPEK ÖSSZEFÉSÜLÉSE (EREDETI HÍRKÉPEKKEL) */
     async function fetchNewsAndWeather() {
         try {
@@ -2042,14 +2120,64 @@
             }
         } catch(e){}
 
-        try {
-            const w = await fetch(`${GOOGLE_WEATHER_ENDPOINT}?_t=${Date.now()}`).then(r => r.json());
-            if (w && w.groups) {
-                cachedWeatherData = w.groups.hu || [];
-                cachedWorldWeatherData = w.groups.world || [];
-                cachedExtremeWeatherData = w.groups.extreme || [];
+        await refreshViewerWeatherData(false);
+    }
+
+    async function refreshViewerWeatherData(force = false) {
+        const hasCache = cachedWeatherData.length || cachedWorldWeatherData.length || cachedExtremeWeatherData.length;
+        if (!force && hasCache && viewerWeatherLastFetchAt && Date.now() - viewerWeatherLastFetchAt < 4 * 60 * 1000) return true;
+        if (viewerWeatherFetchPromise) return viewerWeatherFetchPromise;
+        viewerWeatherFetchPromise = (async () => {
+            const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+            const timeout = controller ? setTimeout(() => controller.abort(), 9000) : null;
+            try {
+                const url = `${GOOGLE_WEATHER_ENDPOINT}?${force ? 'refresh=1&' : ''}_t=${Date.now()}`;
+                const response = await fetch(url, controller ? { cache: 'no-store', signal: controller.signal } : { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const w = await response.json();
+                if (!w || !w.groups) throw new Error('Hiányzó időjárási adatok');
+                const hu = Array.isArray(w.groups.hu) ? w.groups.hu : [];
+                const world = Array.isArray(w.groups.world) ? w.groups.world : [];
+                const extreme = Array.isArray(w.groups.extreme) ? w.groups.extreme : [];
+                // Üres/hibás válasz nem törölheti a legutóbbi valós adatokat.
+                if (hu.length) cachedWeatherData = hu;
+                if (world.length) cachedWorldWeatherData = world;
+                if (extreme.length) cachedExtremeWeatherData = extreme;
+                const updated = hu.length + world.length + extreme.length;
+                if (updated) {
+                    viewerWeatherLastFetchAt = Date.now();
+                    try {
+                        localStorage.setItem(VIEWER_WEATHER_CACHE_KEY, JSON.stringify({
+                            timestamp: viewerWeatherLastFetchAt,
+                            hu: cachedWeatherData,
+                            world: cachedWorldWeatherData,
+                            extreme: cachedExtremeWeatherData
+                        }));
+                    } catch (_) {}
+                }
+                // Kis méretű időjárásikonok alacsony hálózati prioritással előtöltve;
+                // ne versenyezzenek a videó pufferelésével gyenge TV-hardveren.
+                if (force && updated) {
+                    [...cachedWeatherData, ...cachedWorldWeatherData, ...cachedExtremeWeatherData].slice(0, 48).forEach(c => {
+                        if (c && c.iconUrl && /^https:\/\//i.test(c.iconUrl)) {
+                            const img = new Image();
+                            img.decoding = 'async';
+                            try { img.fetchPriority = 'low'; } catch (_) {}
+                            img.src = c.iconUrl;
+                        }
+                    });
+                }
+                // A látható kártyasort nem rajzoljuk újra a hálózati válasz érkezésekor:
+                // az új adatok a következő kategóriaoldal kirajzolásakor jelennek meg, villanás nélkül.
+                return updated > 0 || hasCache;
+            } catch (e) {
+                // A korábbi cache marad érvényben; a hírblokk nem vár hálózati választ.
+                return Boolean(hasCache);
+            } finally {
+                if (timeout) clearTimeout(timeout);
             }
-        } catch(e){}
+        })().finally(() => { viewerWeatherFetchPromise = null; });
+        return viewerWeatherFetchPromise;
     }
 
     async function syncServerNtp() {
@@ -2094,6 +2222,7 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
         enableLowPowerViewerMode();
+        loadViewerWeatherCache();
         buildClockTicks();
         attachDeckTimeMonitor(deckA);
         attachDeckTimeMonitor(deckB);
