@@ -1231,7 +1231,8 @@
             const secondsUntilEvent = eventStartSec - currentSec;
             if (eventHour >= 0 && isNewsEnabledForHour(eventHour) && secondsUntilEvent >= 0 && secondsUntilEvent <= 20) {
                 isVideoTransitioning = false;
-                startHourlyNewsBulletin(eventHour === 0);
+                const started = startHourlyNewsBulletin(eventHour === 0, secondsUntilEvent <= 1);
+                if (started) lastNewsSlotKey = `${getSelectedDateKey(0)}_${String(eventHour).padStart(2, '0')}`;
                 return;
             }
         }
@@ -1360,7 +1361,7 @@
     }
 
     function startHourlyNewsBulletin(isMidnight = false, startImmediately = false) {
-        if (isHourlyNewsRunning) return;
+        if (isHourlyNewsRunning) return false;
         isHourlyNewsRunning = true;
         activeWeatherTier = 0;
         renderActiveWeatherPage = null;
@@ -1384,14 +1385,23 @@
         if (newsLaunchTimer) clearTimeout(newsLaunchTimer);
         newsLaunchTimer = setTimeout(() => {
             newsLaunchTimer = null;
-            purgeDeck(deckA);
-            purgeDeck(deckB);
-            deckA.classList.remove('active');
-            deckB.classList.remove('active');
+            // A deck-takarítás hibája nem blokkolhatja a hírblokk elindítását.
+            try { purgeDeck(deckA); } catch (_) {}
+            try { purgeDeck(deckB); } catch (_) {}
+            if (deckA) deckA.classList.remove('active');
+            if (deckB) deckB.classList.remove('active');
             if (stationClockOverlay) stationClockOverlay.classList.remove('active');
             isStationClockVisible = false;
-            launchNewsMagazine();
+            try {
+                launchNewsMagazine();
+            } catch (error) {
+                console.warn('[CHERRY1] Hírblokk indítási hiba:', error);
+                isHourlyNewsRunning = false;
+                if (hourlyNewsMagazine) hourlyNewsMagazine.classList.remove('active');
+                if (newsBgVideo) { try { newsBgVideo.pause(); } catch (_) {} newsBgVideo.classList.remove('active'); }
+            }
         }, waitMs);
+        return true;
     }
 
     function fadeFinalWeatherCard() {
@@ -1426,6 +1436,7 @@
         renderActiveWeatherPage = null;
         let contentStarted = false;
         let fallbackStartTimer = null;
+        let newsFallbackActivated = false;
 
         hourlyNewsMagazine.classList.add('active');
         if (magMainTitleTxt) magMainTitleTxt.textContent = isMidnightEdition ? "Éjféli hírek" : "Hírek röviden";
@@ -1523,13 +1534,50 @@
             ensureDeckAudio(newsBgVideo, masterVolume);
             newsBgVideo.loop = !isFiniteCustomClip;
             newsBgVideo.classList.add('active');
+            const activateNewsFallback = () => {
+                if (!isHourlyNewsRunning) return;
+                if (!newsFallbackActivated) {
+                    newsFallbackActivated = true;
+                    newsBlockUsesCustomClip = false;
+                    newsBgVideo.onloadedmetadata = null;
+                    newsBgVideo.onended = null;
+                    newsBgVideo.ontimeupdate = null;
+                    try { newsBgVideo.pause(); } catch (_) {}
+                    newsBgVideo.loop = true;
+                    newsBgVideo.onerror = () => {
+                        newsBgVideo.onerror = null;
+                        try { newsBgVideo.pause(); } catch (_) {}
+                        newsBgVideo.classList.remove('active');
+                    };
+                    newsBgVideo.src = BACKUP_STREAM;
+                    try { newsBgVideo.load(); } catch (_) {}
+                    try {
+                        const fallbackPlay = newsBgVideo.play();
+                        if (fallbackPlay && typeof fallbackPlay.catch === 'function') fallbackPlay.catch(() => newsBgVideo.classList.remove('active'));
+                    } catch (_) { newsBgVideo.classList.remove('active'); }
+                    if (!contentStarted) beginContent(defaultDurationSec);
+                } else {
+                    newsBgVideo.onerror = null;
+                    try { newsBgVideo.pause(); } catch (_) {}
+                    newsBgVideo.classList.remove('active');
+                    if (!contentStarted) beginContent(defaultDurationSec);
+                }
+            };
             if (isFiniteCustomClip) {
                 newsBgVideo.onloadedmetadata = () => beginContent(Number(newsBgVideo.duration));
                 newsBgVideo.onended = () => { if (isHourlyNewsRunning) endHourlyNewsBulletin(); };
-                // Hibás/eltűnt hírvideó ne fagyassza meg a csatornát: ugorjunk a következő klipre.
-                newsBgVideo.onerror = () => { if (isHourlyNewsRunning) endHourlyNewsBulletin(); };
+                // Betöltési vagy lejátszási hiba esetén a blokk maradjon meg; csak a háttérforrás essen vissza.
+                newsBgVideo.onerror = activateNewsFallback;
             }
-            newsBgVideo.play().catch(() => {});
+            let initialPlay = null;
+            try {
+                initialPlay = newsBgVideo.play();
+            } catch (_) {
+                if (isFiniteCustomClip && isHourlyNewsRunning) activateNewsFallback();
+            }
+            if (initialPlay && typeof initialPlay.catch === 'function') initialPlay.catch(() => {
+                if (isFiniteCustomClip && isHourlyNewsRunning) activateNewsFallback();
+            });
             if (isFiniteCustomClip && newsBgVideo.readyState >= 1) beginContent(Number(newsBgVideo.duration));
         }
 
@@ -1807,8 +1855,8 @@
                 curDeck.volume = Math.max(0, masterVolume * (1 - fade));
             }
             if (!isHourlyNewsRunning && lastNewsSlotKey !== newsSlotKey) {
-                lastNewsSlotKey = newsSlotKey;
-                startHourlyNewsBulletin(nextHour === 0);
+                const started = startHourlyNewsBulletin(nextHour === 0, false);
+                if (started) lastNewsSlotKey = newsSlotKey;
             }
         }
 
@@ -1832,8 +1880,8 @@
         if (scheduledNews && isNewsEnabledForHour(h) && !isHourlyNewsRunning) {
             const activeSlotKey = `${todayKey}_${String(h).padStart(2, '0')}`;
             if (lastNewsSlotKey !== activeSlotKey) {
-                lastNewsSlotKey = activeSlotKey;
-                startHourlyNewsBulletin(h === 0, true);
+                const started = startHourlyNewsBulletin(h === 0, true);
+                if (started) lastNewsSlotKey = activeSlotKey;
             }
         }
 
@@ -1878,7 +1926,8 @@
         let startOffset = 0;
         if (clip && clip.isNews) {
             if (isNewsEnabledForHour(now.getHours())) {
-                startHourlyNewsBulletin(now.getHours() === 0, true);
+                const started = startHourlyNewsBulletin(now.getHours() === 0, true);
+                if (started) lastNewsSlotKey = `${todayKey}_${String(now.getHours()).padStart(2, '0')}`;
                 return;
             }
             const hourStart = Math.floor(curSec / 3600) * 3600;
